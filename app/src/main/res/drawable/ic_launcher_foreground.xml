@@ -3,7 +3,8 @@
     android:height="108dp"
     android:viewportWidth="100"
     android:viewportHeight="100">
-    <group android:scaleX="0.46444446"
+    <group
+        android:scaleX="0.46444446"
         android:scaleY="0.46444446"
         android:translateX="30"
         android:translateY="25">
@@ -21,3 +22,7 @@
             android:fillColor="#ffffff"/>
     </group>
 </vector>
+
+
+<!--    android:scaleX="0.46444446"-->
+<!--    android:scaleY="0.46444446"-->
