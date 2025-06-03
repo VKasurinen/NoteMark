@@ -3,8 +3,10 @@ package com.vkasurinen.notemark.core.presentation.designsystem.buttons
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -80,9 +82,14 @@ fun NoteMarkButton(
 
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier
+            .height(IntrinsicSize.Min),
         shape = RoundedCornerShape(10.dp),
         colors = colors,
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 2.dp
+        ),
         enabled = enabled
     ) {
         Row(
@@ -99,7 +106,10 @@ fun NoteMarkButton(
                 Spacer(modifier = Modifier.width(8.dp))
             }
 
-            Text(text = text)
+            Text(
+                text = text,
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
+            )
 
             endIcon?.let { icon ->
                 Spacer(modifier = Modifier.width(8.dp))

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.vkasurinen.notemark.auth.presentation.landing.LandingRoot
 import com.vkasurinen.notemark.core.presentation.designsystem.buttons.NoteMarkButtonSecondary
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 
@@ -19,18 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NoteMarkTheme {
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(60.dp)
-                ) {
-
-                    NoteMarkButtonSecondary(
-                        "ASDaas",
-                        onClick = {}
-                    )
-
-                }
+                LandingRoot()
             }
         }
     }

@@ -2,7 +2,11 @@ package com.vkasurinen.notemark.core.presentation.designsystem.buttons
 
 import android.content.res.Configuration
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import androidx.compose.ui.platform.LocalLayoutDirection
 
 @Composable
 fun NoteMarkButtonSecondary(
@@ -19,25 +24,31 @@ fun NoteMarkButtonSecondary(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val buttonShape = MaterialTheme.shapes.medium
+    val layoutDirection = LocalLayoutDirection.current
 
     Button(
+        onClick = onClick,
         modifier = modifier
+            .height(IntrinsicSize.Min)
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.primary,
-                shape = buttonShape
+                shape = RoundedCornerShape(10.dp)
             ),
-        onClick = onClick,
-        shape = buttonShape,
+        shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.primary
         ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 2.dp
+        )
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
         )
     }
 }
