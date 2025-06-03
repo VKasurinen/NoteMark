@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
@@ -24,21 +25,18 @@ fun NoteMarkButtonSecondary(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val layoutDirection = LocalLayoutDirection.current
-
     Button(
         onClick = onClick,
         modifier = modifier
-            .height(IntrinsicSize.Min)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(10.dp)
-            ),
+            .height(48.dp), // Fixed height for consistency
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
             contentColor = MaterialTheme.colorScheme.primary
+        ),
+        border = ButtonDefaults.outlinedButtonBorder.copy(
+            brush = SolidColor(MaterialTheme.colorScheme.primary),
+            width = 1.dp
         ),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
@@ -47,8 +45,8 @@ fun NoteMarkButtonSecondary(
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
     }
 }
