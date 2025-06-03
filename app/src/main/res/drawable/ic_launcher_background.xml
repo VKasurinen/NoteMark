@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--<layer-list xmlns:android="http://schemas.android.com/apk/res/android">-->
-    <!--    <item>-->
-    <!--        <shape android:shape="rectangle">-->
-    <!--            <gradient-->
-    <!--                android:startColor="#5977F7"-->
-    <!--                android:endColor="#135dd4"-->
-    <!--                android:angle="270"/>-->
-    <!--        </shape>-->
-    <!--    </item>-->
-    <!--</layer-list>-->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#5977F7"
+                android:endColor="#135dd4"
+                android:angle="270"/>
+        </shape>
+    </item>
 </layer-list>
 
 

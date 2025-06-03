@@ -3,12 +3,11 @@
 
     <style name="Theme.NoteMark" parent="android:Theme.Material.Light.NoActionBar" />
 
-<!--    <style name="Theme.SplashScreen" parent="android:Theme.Material.Light.NoActionBar">-->
-<!--        <item name="android:windowBackground">@drawable/splash_background</item>-->
-<!--    </style>-->
-
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="android:windowBackground">@drawable/splash_gradient</item>
+        <item name="android:windowBackground">@color/startColor</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.NoteMark</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
 </resources>

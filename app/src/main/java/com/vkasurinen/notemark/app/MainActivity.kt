@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.vkasurinen.notemark.auth.presentation.landing.LandingRoot
 import com.vkasurinen.notemark.core.presentation.designsystem.buttons.NoteMarkButtonSecondary
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
