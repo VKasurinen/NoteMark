@@ -41,44 +41,27 @@ fun NoteMarkButton(
     modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit,
-    variant: ButtonVariant = ButtonVariant.PRIMARY,
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
     iconTint: Color? = null,
     enabled: Boolean = true
 ) {
-    val colors = when (variant) {
-        ButtonVariant.PRIMARY -> {
-            if (enabled) {
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                )
-            } else {
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        ButtonVariant.SECONDARY -> {
-            if (enabled) {
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                )
-            } else {
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
+    val colors = if (enabled) {
+        ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        )
+    } else {
+        ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 
-    val defaultIconTint = when (variant) {
-        ButtonVariant.PRIMARY -> MaterialTheme.colorScheme.onPrimary
-        ButtonVariant.SECONDARY -> MaterialTheme.colorScheme.onSurface
+    val defaultIconTint = if (enabled) {
+        MaterialTheme.colorScheme.onPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurface
     }
 
     Button(
@@ -138,7 +121,6 @@ private fun NoteMarkButtonPreview() {
             NoteMarkButton(
                 text = "Primary Button",
                 onClick = {},
-                variant = ButtonVariant.PRIMARY,
                 startIcon = ImageVector.vectorResource(R.drawable.copy)
             )
 
@@ -146,7 +128,6 @@ private fun NoteMarkButtonPreview() {
             NoteMarkButton(
                 text = "Secondary Button",
                 onClick = {},
-                variant = ButtonVariant.SECONDARY,
                 endIcon = ImageVector.vectorResource(R.drawable.copy),
                 enabled = false,
                 iconTint = Color(0xFF1b1b1c).copy(alpha = 0.40f)
@@ -156,13 +137,11 @@ private fun NoteMarkButtonPreview() {
             NoteMarkButton(
                 text = "Simple Primary",
                 onClick = {},
-                variant = ButtonVariant.PRIMARY,
             )
 
             NoteMarkButton(
                 text = "Simple Secondary",
                 onClick = {},
-                variant = ButtonVariant.PRIMARY,
                 enabled = true
             )
 
@@ -170,14 +149,12 @@ private fun NoteMarkButtonPreview() {
             NoteMarkButton(
                 text = "Disabled Primary",
                 onClick = {},
-                variant = ButtonVariant.PRIMARY,
                 enabled = false
             )
 
             NoteMarkButton(
                 text = "Disabled Secondary",
                 onClick = {},
-                variant = ButtonVariant.SECONDARY,
                 enabled = false
             )
         }

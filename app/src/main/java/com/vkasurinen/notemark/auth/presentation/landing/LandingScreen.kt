@@ -215,7 +215,8 @@ private fun LandingContent(
         verticalArrangement = if (isLandscape) Arrangement.SpaceEvenly else Arrangement.Center
     ) {
         Column(
-            modifier = Modifier.weight(1f, fill = !isLandscape),
+            modifier = Modifier
+                .weight(1f, fill = !isLandscape),
             verticalArrangement = Arrangement.Center
         ) {
             Text(

@@ -71,7 +71,7 @@ fun NoteTextInput(
                     shape = MaterialTheme.shapes.medium
                 )
                 .background(
-                    color = if (isFocused) Color.White else MaterialTheme.colorScheme.surface,
+                    color = if (isFocused) Color.White else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                     shape = MaterialTheme.shapes.medium
                 )
                 .padding(horizontal = 12.dp, vertical = 16.dp)
