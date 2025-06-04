@@ -79,7 +79,7 @@ fun LandingScreen(
                 Box(
                     modifier = Modifier
                         .weight(0.7f)
-                        .fillMaxHeight(0.8f)
+                        .fillMaxHeight(0.80f)
                         .background(
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.95f),
                             shape = RoundedCornerShape(topStart = 32.dp, bottomStart = 32.dp)
@@ -164,7 +164,7 @@ fun LandingScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(0.65f)
+                        .weight(0.6f)
                         .background(
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
                             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
@@ -224,7 +224,7 @@ private fun LandingContent(
             )
         }
 
-        Spacer(modifier = if (isLandscape) Modifier.height(16.dp) else Modifier.height(30.dp))
+        Spacer(modifier = if (isLandscape) Modifier.height(18.dp) else Modifier.height(20.dp))
 
         Column(
             modifier = Modifier.fillMaxWidth(),

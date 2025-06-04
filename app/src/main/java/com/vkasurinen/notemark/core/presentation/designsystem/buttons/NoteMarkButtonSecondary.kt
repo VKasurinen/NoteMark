@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -25,18 +26,21 @@ fun NoteMarkButtonSecondary(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+
     Button(
         onClick = onClick,
         modifier = modifier
-            .height(48.dp), // Fixed height for consistency
+            .height(IntrinsicSize.Min)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(10.dp)
+            ),
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
             contentColor = MaterialTheme.colorScheme.primary
-        ),
-        border = ButtonDefaults.outlinedButtonBorder.copy(
-            brush = SolidColor(MaterialTheme.colorScheme.primary),
-            width = 1.dp
         ),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
@@ -45,11 +49,13 @@ fun NoteMarkButtonSecondary(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
     }
 }
+
+
 
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
