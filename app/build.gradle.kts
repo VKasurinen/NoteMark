@@ -77,6 +77,8 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
 
+    implementation(libs.ktor.client.auth)
+
     // DI - Koin
     implementation(libs.bundles.koin)
 

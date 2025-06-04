@@ -28,22 +28,38 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.vkasurinen.notemark.R
+import com.vkasurinen.notemark.app.navigation.NavigationRoute
 import com.vkasurinen.notemark.core.presentation.designsystem.buttons.NoteMarkButton
 import com.vkasurinen.notemark.core.presentation.designsystem.buttons.NoteMarkButtonSecondary
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LandingRoot() {
+fun LandingRoot(
+    navController: NavHostController,
+    viewModel: LandingViewModel = koinViewModel(),
+) {
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is LandingEvent.NavigateToRegister -> {
+                navController.navigate(NavigationRoute.Register.route)
+            }
+        }
+    }
+
     LandingScreen(
-        onGetStartedClick = { /* Handle navigation */ },
-        onLogInClick = { /* Handle navigation */ }
+        onGetStartedClick = { viewModel.onAction(LandingAction.OnGetStartedClick) },
+        onLogInClick = { viewModel.onAction(LandingAction.OnLogInClick) }
     )
 }
 

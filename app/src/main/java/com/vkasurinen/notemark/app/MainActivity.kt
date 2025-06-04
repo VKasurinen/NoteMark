@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
+import com.vkasurinen.notemark.app.navigation.NavigationRoot
 import com.vkasurinen.notemark.auth.presentation.landing.LandingRoot
 import com.vkasurinen.notemark.core.presentation.designsystem.buttons.NoteMarkButtonSecondary
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
@@ -21,8 +23,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NoteMarkTheme {
-
-                LandingRoot()
+                NavigationRoot(
+                    navController = rememberNavController()
+                )
             }
         }
     }

@@ -7,28 +7,25 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
+
 class LandingViewModel : ViewModel() {
 
-    private var hasLoadedInitialData = false
-
-//    private val _state = MutableStateFlow(LandingState())
-//    val state = _state
-//        .onStart {
-//            if (!hasLoadedInitialData) {
-//                /** Load initial data here **/
-//                hasLoadedInitialData = true
-//            }
-//        }
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(5_000L),
-//            initialValue = LandingState()
-//        )
+    private val _events = MutableSharedFlow<LandingEvent>()
+    val events = _events.asSharedFlow()
 
     fun onAction(action: LandingAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            is LandingAction.OnGetStartedClick -> {
+                viewModelScope.launch {
+                    _events.emit(LandingEvent.NavigateToRegister)
+                }
+            }
+            is LandingAction.OnLogInClick -> {
+                // Handle login action if needed
+            }
         }
     }
-
 }
