@@ -34,7 +34,7 @@ import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkThem
 
 
 @Composable
-fun NoteTextInput(
+fun NoteTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     label: String? = null,
@@ -117,7 +117,7 @@ fun DefaultPreview() {
         val filledState = rememberTextFieldState("Sample text")
 
         Column(modifier = Modifier.padding(16.dp)) {
-            NoteTextInput(
+            NoteTextField(
                 label = "Email",
                 state = emptyState,
                 placeholder = "Enter your email",
@@ -127,7 +127,7 @@ fun DefaultPreview() {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            NoteTextInput(
+            NoteTextField(
                 label = "Password",
                 state = filledState,
                 placeholder = "Enter your password",
@@ -146,7 +146,7 @@ fun DarkModePreview() {
         val state = rememberTextFieldState()
 
         Column(modifier = Modifier.padding(16.dp)) {
-            NoteTextInput(
+            NoteTextField(
                 label = "Dark Mode Input",
                 state = state,
                 placeholder = "Works in dark mode",

@@ -26,19 +26,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vkasurinen.notemark.R
 import com.vkasurinen.notemark.core.presentation.designsystem.buttons.NoteMarkButton
-import com.vkasurinen.notemark.core.presentation.designsystem.text_fields.NotePasswordTextInput
-import com.vkasurinen.notemark.core.presentation.designsystem.text_fields.NoteTextInput
-import com.vkasurinen.notemark.core.presentation.designsystem.theme.EyeOpen
+import com.vkasurinen.notemark.core.presentation.designsystem.text_fields.NotePasswordTextField
+import com.vkasurinen.notemark.core.presentation.designsystem.text_fields.NoteTextField
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RegisterRoot(
-    viewModel: RegisterViewModel = viewModel()
+    viewModel: RegisterViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -71,7 +70,28 @@ fun RegisterScreen(
                     .fillMaxWidth()
                     .padding(20.dp)
             ) {
-                NoteTextInput(
+
+                Text(
+                    text = stringResource(R.string.create_account),
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 2,
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = stringResource(R.string.capture_toughts),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                NoteTextField(
                     label = stringResource(R.string.username),
                     state = state.username,
                     placeholder = "John.doe"
@@ -79,7 +99,7 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                NoteTextInput(
+                NoteTextField(
                     label = stringResource(R.string.email),
                     state = state.email,
                     placeholder = "john.doe@example.com"
@@ -87,7 +107,7 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                NotePasswordTextInput(
+                NotePasswordTextField(
                     state = state.password,
                     isPasswordVisible = state.isPasswordVisible,
                     onTogglePasswordVisibility = {
@@ -99,7 +119,7 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                NotePasswordTextInput(
+                NotePasswordTextField(
                     state = state.password2,
                     isPasswordVisible = state.isPassword2Visible,
                     onTogglePasswordVisibility = {
@@ -117,6 +137,21 @@ fun RegisterScreen(
                     onClick = { onAction(RegisterAction.OnRegisterClick) },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = state.canRegister
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Already have an account?",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            // Handle navigation to login screen
+                            onAction(RegisterAction.OnLoginClick)
+                        },
+                    textAlign = TextAlign.Center
                 )
             }
         }

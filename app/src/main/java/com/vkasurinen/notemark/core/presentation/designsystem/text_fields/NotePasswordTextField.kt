@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
@@ -47,7 +48,7 @@ import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkThem
 
 
 @Composable
-fun NotePasswordTextInput(
+fun NotePasswordTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     isPasswordVisible: Boolean,
@@ -87,6 +88,11 @@ fun NotePasswordTextInput(
 
             BasicSecureTextField(
                 state = state,
+                textObfuscationMode = if (isPasswordVisible) {
+                    TextObfuscationMode.Visible
+                } else {
+                    TextObfuscationMode.Hidden
+                },
                 modifier = Modifier
                     .onFocusChanged {
                         isFocused = it.isFocused
@@ -160,7 +166,7 @@ fun NotePasswordTextFieldPreview() {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            NotePasswordTextInput(
+            NotePasswordTextField(
                 state = rememberTextFieldState(),
                 label = "Password",
                 placeholder = "Pekka123",
@@ -171,7 +177,7 @@ fun NotePasswordTextFieldPreview() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            NotePasswordTextInput(
+            NotePasswordTextField(
                 state = rememberTextFieldState(),
                 label = "Password",
                 placeholder = "Pekka123",
