@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 class RegisterViewModel : ViewModel() {
 
@@ -27,7 +28,18 @@ class RegisterViewModel : ViewModel() {
 
     fun onAction(action: RegisterAction) {
         when (action) {
-            else -> TODO("Handle actions")
+            RegisterAction.OnLoginClick -> TODO()
+            RegisterAction.OnRegisterClick -> TODO()
+
+            is RegisterAction.OnTogglePasswordVisibilityClick -> {
+                _state.update { currentState ->
+                    if (action.isPassword1) {
+                        currentState.copy(isPasswordVisible = !currentState.isPasswordVisible)
+                    } else {
+                        currentState.copy(isPassword2Visible = !currentState.isPassword2Visible)
+                    }
+                }
+            }
         }
     }
 

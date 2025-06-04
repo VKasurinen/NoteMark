@@ -10,11 +10,13 @@ data class RegisterState(
     val isUsernameValid: Boolean = false,
     val usernameError: String? = null,
     val password: TextFieldState = TextFieldState(),
+    val password2: TextFieldState = TextFieldState(),
     val isPasswordVisible: Boolean = false,
+    val isPassword2Visible: Boolean = false,
     val passwordValidationState: PasswordValidationState = PasswordValidationState(),
     val isRegistering: Boolean = false,
     val canRegister: Boolean = false
 ) {
     val isPasswordMatching: Boolean
-        get() = password.text.isNotEmpty()
+        get() = password.text == password2.text && password.text.isNotEmpty()
 }
