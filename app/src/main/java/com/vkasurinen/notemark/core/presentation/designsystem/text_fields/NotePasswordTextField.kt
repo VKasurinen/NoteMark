@@ -89,7 +89,7 @@ fun NotePasswordTextField(
                     color = if (isFocused) Color.White else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
                     shape = MaterialTheme.shapes.medium
                 )
-                .padding(horizontal = 12.dp, vertical = 18.dp)
+                .padding(horizontal = 12.dp, vertical = 14.dp)
         ) {
 
             BasicSecureTextField(
