@@ -94,7 +94,10 @@ fun RegisterScreen(
                 NoteTextField(
                     label = stringResource(R.string.username),
                     state = state.username,
-                    placeholder = "John.doe"
+                    placeholder = "John.doe",
+                    supportingText = "Use between 3 and 20 characters",
+                    isError = !state.isUsernameValid && state.username.text.isNotEmpty(),
+                    errorText = state.usernameError ?: "Username must be at least 3 or max 20 characters"
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -102,7 +105,9 @@ fun RegisterScreen(
                 NoteTextField(
                     label = stringResource(R.string.email),
                     state = state.email,
-                    placeholder = "john.doe@example.com"
+                    placeholder = "john.doe@example.com",
+                    isError = !state.isEmailValid && state.email.text.isNotEmpty(),
+                    errorText = "Invalid email provided"
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -114,7 +119,10 @@ fun RegisterScreen(
                         onAction(RegisterAction.OnTogglePasswordVisibilityClick(isPassword1 = true))
                     },
                     label = stringResource(R.string.password),
-                    placeholder = "Password"
+                    placeholder = "Password",
+                    supportingText = "Use 8+ characters with a number or symbol",
+                    isError = !state.passwordValidationState.isValidPassword && state.password.text.isNotEmpty(),
+                    errorText = state.passwordValidationState.errorMessage
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -126,8 +134,9 @@ fun RegisterScreen(
                         onAction(RegisterAction.OnTogglePasswordVisibilityClick(isPassword1 = false))
                     },
                     label = stringResource(R.string.repeat_password),
-                    placeholder = "Password"
-
+                    placeholder = "Password",
+                    isError = !state.isPasswordMatching && state.password2.text.isNotEmpty(),
+                    errorText = "Passwords do not match"
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))

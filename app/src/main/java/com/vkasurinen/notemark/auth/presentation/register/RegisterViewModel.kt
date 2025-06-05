@@ -56,7 +56,7 @@ class RegisterViewModel(
         val isEmailValid = userDataValidator.isValidEmail(email)
 
         // Validate username (basic check for now)
-        val isUsernameValid = username.length >= 3
+        val isUsernameValid = username.length in 3..20
 
         // Validate password
         val passwordValidation = userDataValidator.validatePassword(password)

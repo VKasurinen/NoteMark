@@ -7,4 +7,11 @@ data class PasswordValidationState(
 ) {
     val isValidPassword: Boolean
         get() = hasMinLength && (hasNumber || hasSymbol)
+
+    val errorMessage: String?
+        get() = if (!isValidPassword) {
+            "Password must be at least 8 characters and include a number or symbol"
+        } else {
+            null
+        }
 }

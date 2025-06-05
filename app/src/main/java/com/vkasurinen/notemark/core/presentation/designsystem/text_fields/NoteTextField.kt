@@ -41,7 +41,9 @@ fun NoteTextField(
     placeholder: String? = null,
     borderColor: Color = MaterialTheme.colorScheme.primary,
     supportingText: String? = null,
-    supportingTextColor: Color? = null,
+    supportingTextColor: Color? = MaterialTheme.colorScheme.onSurfaceVariant,
+    isError: Boolean = false,
+    errorText: String? = null
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -59,8 +61,12 @@ fun NoteTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(
-                    width = if (isFocused) 1.dp else 0.dp,
-                    color = if (isFocused) borderColor else Color.Transparent,
+                    width = if (isFocused || isError) 1.dp else 0.dp,
+                    color = when {
+                        isError -> MaterialTheme.colorScheme.error
+                        isFocused -> borderColor
+                        else -> Color.Transparent
+                    },
                     shape = MaterialTheme.shapes.medium
                 )
                 .background(
@@ -97,16 +103,29 @@ fun NoteTextField(
             }
         }
 
-        supportingText?.let {
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = it,
-                style = MaterialTheme.typography.labelMedium,
-                color = supportingTextColor ?: MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        when {
+            isError && errorText != null -> {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = errorText,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 12.dp)
+                )
+            }
+            isFocused && supportingText != null -> {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = supportingText,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = supportingTextColor ?: MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(start = 12.dp)
+                )
+            }
         }
     }
 }
+
 
 
 @Preview(showBackground = true)
