@@ -15,10 +15,13 @@ koin = "4.0.0"
 navigationCompose = "2.9.0"
 kotlinSerialization = "1.8.1"
 timber = "5.0.1"
-desugar_jdk_libs = "2.0.4"
+desugar_jdk_libs = "2.1.5"
 glance = "1.1.1"
-appcompat = "1.7.0"
+appcompat = "1.7.1"
+
 ktor = "3.0.0"
+ktorClientLogging = "3.0.0"
+ktorServerCallLogging = "3.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +45,13 @@ androidx-glance-material3 = { module = "androidx.glance:glance-material3", versi
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorClientLogging" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktorServerCallLogging" }
+
 
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -57,9 +67,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
-[bundles]
-widget-glance = ["androidx-glance-appwidget", "androidx-glance-material3"]
-koin = ["koin-core", "koin-android", "koin-androidx-compose"]
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -69,3 +77,18 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
+
+[bundles]
+
+ktor = [
+    "ktor-client-auth",
+    "ktor-client-cio",
+    "ktor-client-content-negotiation",
+    "ktor-client-core",
+    "ktor-client-logging",
+    "ktor-serialization-kotlinx-json",
+    "ktor-server-call-logging"
+]
+
+widget-glance = ["androidx-glance-appwidget", "androidx-glance-material3"]
+koin = ["koin-core", "koin-android", "koin-androidx-compose"]

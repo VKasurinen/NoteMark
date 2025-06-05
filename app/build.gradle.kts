@@ -91,4 +91,7 @@ dependencies {
 
     // Logging
     implementation(libs.timber)
+
+    //Ktor
+    implementation(libs.bundles.ktor)
 }

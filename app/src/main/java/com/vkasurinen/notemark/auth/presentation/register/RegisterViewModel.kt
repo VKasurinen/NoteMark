@@ -4,15 +4,21 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vkasurinen.notemark.auth.domain.UserDataValidator
+import com.vkasurinen.notemark.auth.domain.repository.AuthRepository
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.vkasurinen.notemark.core.domain.util.Result
+import com.vkasurinen.notemark.core.presentation.util.UiText
 
 class RegisterViewModel(
-    private val userDataValidator: UserDataValidator
+    private val userDataValidator: UserDataValidator,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RegisterState())
@@ -22,6 +28,9 @@ class RegisterViewModel(
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = RegisterState()
         )
+
+    private val eventChannel = Channel<RegisterEvent>()
+    val events = eventChannel.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -87,14 +96,7 @@ class RegisterViewModel(
                 // Handle navigation to login screen
             }
 
-            RegisterAction.OnRegisterClick -> {
-                if (state.value.canRegister) {
-                    _state.update { it.copy(isRegistering = true) }
-                    // Perform registration logic here
-                    // After registration is complete:
-                    // _state.update { it.copy(isRegistering = false) }
-                }
-            }
+            RegisterAction.OnRegisterClick -> register()
 
             is RegisterAction.OnTogglePasswordVisibilityClick -> {
                 _state.update { currentState ->
@@ -107,4 +109,37 @@ class RegisterViewModel(
             }
         }
     }
+
+    fun register() {
+        viewModelScope.launch {
+            _state.update { it.copy(isRegistering = true) }
+            val result = authRepository.register(
+                email = _state.value.email.text.toString().trim(),
+                username = _state.value.username.text.toString().trim(),
+                password = _state.value.password.text.toString()
+            )
+            _state.update { it.copy(isRegistering = false) }
+
+            when (result) {
+                is Result.Error -> {
+                    val errorMessage = if (result.message == "Conflict") {
+                        "Email already exists"
+                    } else {
+                        result.message ?: "An unknown error occurred"
+                    }
+                    eventChannel.send(RegisterEvent.Error(UiText.Dynamic(errorMessage)))
+                }
+                is Result.Success -> {
+                    eventChannel.send(RegisterEvent.RegistrationSuccess)
+                }
+
+                is Result.Loading -> {
+                    _state.update { it.copy(isRegistering = result.isLoading) }
+                }
+            }
+        }
+    }
+
+
+
 }
