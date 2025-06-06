@@ -21,7 +21,9 @@ fun NavigationRoot(
             )
         }
         composable(NavigationRoute.Register.route) {
-            RegisterRoot()
+            RegisterRoot(
+                navController = navController
+            )
         }
     }
 }
