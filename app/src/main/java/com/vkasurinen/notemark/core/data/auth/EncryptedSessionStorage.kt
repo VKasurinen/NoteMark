@@ -9,8 +9,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.vkasurinen.notemark.core.domain.AuthInfo
 import com.vkasurinen.notemark.core.domain.SessionStorage
 import kotlinx.coroutines.flow.first
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class EncryptedSessionStorage(

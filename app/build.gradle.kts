@@ -94,4 +94,7 @@ dependencies {
 
     //Ktor
     implementation(libs.bundles.ktor)
+
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.kotlinx.coroutines.android)
 }

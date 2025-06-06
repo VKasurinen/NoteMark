@@ -6,10 +6,12 @@ import com.vkasurinen.notemark.auth.data.api.AuthApi
 import com.vkasurinen.notemark.auth.data.requests.LoginRequest
 import com.vkasurinen.notemark.auth.data.requests.RegisterRequest
 import com.vkasurinen.notemark.auth.domain.repository.AuthRepository
+import com.vkasurinen.notemark.core.domain.AuthInfo
+import com.vkasurinen.notemark.core.domain.SessionStorage
 
 class AuthRepositoryImpl(
     private val authApi: AuthApi,
-//    private val sessionStorage: SessionStorage
+    private val sessionStorage: SessionStorage
 ) : AuthRepository {
 
     override suspend fun login(
@@ -23,11 +25,20 @@ class AuthRepositoryImpl(
                     password = password
                 )
             )
+
+            sessionStorage.set(
+                AuthInfo(
+                    accessToken = response.accessToken,
+                    refreshToken = response.refreshToken,
+                )
+            )
+
             Result.Success(response)
         } catch (e: Exception) {
             Result.Error(e.message ?: "An error occurred")
         }
     }
+
 
     override suspend fun register(
         username: String,
