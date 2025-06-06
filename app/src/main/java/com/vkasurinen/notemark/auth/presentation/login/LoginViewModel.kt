@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.vkasurinen.notemark.core.domain.util.Result
+import com.vkasurinen.notemark.core.presentation.util.UiText
 
 class LoginViewModel(
     private val authRepository: AuthRepository
@@ -51,7 +53,7 @@ class LoginViewModel(
     fun onAction(action: LoginAction) {
         when (action) {
             LoginAction.OnLoginClick -> {
-                // Navigate to the mainscreen / notescreen or maybe just raise a toast
+                login()
             }
             LoginAction.OnRegisterClick -> {
                 viewModelScope.launch {
@@ -68,4 +70,24 @@ class LoginViewModel(
         }
     }
 
+    private fun login() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoggingIn = true) }
+            val result = authRepository.login(
+                email = _state.value.email.text.toString().trim(),
+                password = _state.value.password.text.toString()
+            )
+            _state.update { it.copy(isLoggingIn = false) }
+
+            when (result) {
+                is Result.Error -> {
+                    eventChannel.send(LoginEvent.Error(UiText.Dynamic(result.message ?: "Login failed")))
+                }
+                is Result.Success -> {
+                    eventChannel.send(LoginEvent.LoginSuccess)
+                }
+                is Result.Loading -> Unit // Handled by state update
+            }
+        }
+    }
 }

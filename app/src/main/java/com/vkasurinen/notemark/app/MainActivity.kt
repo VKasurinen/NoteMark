@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.vkasurinen.notemark.app.navigation.NavigationRoot
 import com.vkasurinen.notemark.auth.domain.repository.AuthRepository
-import com.vkasurinen.notemark.auth.presentation.landing.LandingRoot
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.core.presentation.designsystem.buttons.NoteMarkButtonSecondary
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme

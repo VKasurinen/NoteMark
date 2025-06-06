@@ -1,5 +1,6 @@
 package com.vkasurinen.notemark.auth.presentation.register
 
+import android.util.Log
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -133,6 +134,7 @@ class RegisterViewModel(
                 }
                 is Result.Success -> {
                     eventChannel.send(RegisterEvent.RegistrationSuccess)
+                    Log.d("RegisterViewmodel", "Registration completed succefully")
                 }
 
                 is Result.Loading -> {

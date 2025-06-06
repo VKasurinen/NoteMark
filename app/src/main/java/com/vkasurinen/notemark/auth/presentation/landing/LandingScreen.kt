@@ -45,17 +45,23 @@ import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LandingRoot(
+fun LandingScreenRoot(
     navController: NavHostController,
     viewModel: LandingViewModel = koinViewModel(),
 ) {
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is LandingEvent.NavigateToRegister -> {
-                navController.navigate(NavigationRoute.Register.route)
+                navController.navigate(NavigationRoute.Register.route) {
+                    popUpTo(NavigationRoute.Landing.route) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
             is LandingEvent.NavigateToLogin -> {
-                navController.navigate(NavigationRoute.Login.route)
+                navController.navigate(NavigationRoute.Login.route) {
+                    popUpTo(NavigationRoute.Landing.route) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
         }
     }

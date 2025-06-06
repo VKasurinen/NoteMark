@@ -56,14 +56,19 @@ fun LoginScreenRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is LoginEvent.NavigateToRegister -> {
-                navController.navigate(NavigationRoute.Register.route)
+                navController.navigate(NavigationRoute.Register.route) {
+                    popUpTo(NavigationRoute.Login.route) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
-
             is LoginEvent.Error -> {
                 Toast.makeText(context, event.error.asString(context), Toast.LENGTH_SHORT).show()
             }
-
-            LoginEvent.LoginSuccess -> TODO()
+            LoginEvent.LoginSuccess -> {
+                navController.navigate("blank") {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
         }
     }
 

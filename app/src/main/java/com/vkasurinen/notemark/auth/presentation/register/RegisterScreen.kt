@@ -19,7 +19,7 @@ import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun RegisterRoot(
+fun RegisterScreenRoot(
     navController: NavHostController,
     viewModel: RegisterViewModel = koinViewModel()
 ) {
@@ -29,12 +29,19 @@ fun RegisterRoot(
         when (event) {
             is RegisterEvent.RegistrationSuccess -> {
                 Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                navController.navigate(NavigationRoute.Login.route) {
+                    popUpTo(NavigationRoute.Register.route) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
             is RegisterEvent.Error -> {
                 Toast.makeText(context, event.error.asString(context), Toast.LENGTH_SHORT).show()
             }
             is RegisterEvent.NavigateToLogin -> {
-                navController.navigate(NavigationRoute.Login.route)
+                navController.navigate(NavigationRoute.Login.route) {
+                    popUpTo(NavigationRoute.Register.route) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
         }
     }
