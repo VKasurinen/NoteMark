@@ -89,22 +89,3 @@ fun RegisterPortraitTablet(
     }
 }
 
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(MaterialTheme.colorScheme.primary)
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .fillMaxHeight()
-//                .padding(top = 50.dp)
-//                .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
-//                .background(MaterialTheme.colorScheme.surfaceVariant)
-//        ) {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(20.dp)
-//            ) {
-

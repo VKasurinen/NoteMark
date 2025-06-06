@@ -1,7 +1,7 @@
 package com.vkasurinen.notemark.auth.presentation.register.components
 
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,35 +24,38 @@ import com.vkasurinen.notemark.auth.presentation.register.RegisterAction
 import com.vkasurinen.notemark.auth.presentation.register.RegisterState
 
 @Composable
-fun RegisterPortraitPhone(
+fun RegisterLandscapePhone(
     state: RegisterState,
     onAction: (RegisterAction) -> Unit
 ) {
-    Box(
+
+    Row(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
     ) {
+        // Left column - Text content
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .weight(1f)
                 .fillMaxHeight()
-                .padding(top = 50.dp)
-                .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
+                .padding(top = 20.dp)
+                .clip(RoundedCornerShape(topStart = 20.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
+                    .padding(top = 8.dp, start = 20.dp)
             ) {
-
                 Text(
                     text = stringResource(R.string.create_account),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     maxLines = 2,
                 )
 
@@ -64,11 +67,28 @@ fun RegisterPortraitPhone(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     modifier = Modifier.fillMaxWidth()
                 )
+            }
+        }
 
-                Spacer(modifier = Modifier.height(30.dp))
+        // Right column - Form
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(top = 20.dp)
+                .clip(RoundedCornerShape(topEnd = 20.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+        ) {
 
-                RegisterForm(state, onAction)
-
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 20.dp, top = 8.dp)
+            ) {
+                RegisterForm(
+                    state = state,
+                    onAction = onAction,
+                )
             }
         }
     }

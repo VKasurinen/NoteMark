@@ -54,6 +54,9 @@ fun LandingRoot(
             is LandingEvent.NavigateToRegister -> {
                 navController.navigate(NavigationRoute.Register.route)
             }
+            is LandingEvent.NavigateToLogin -> {
+                navController.navigate(NavigationRoute.Login.route)
+            }
         }
     }
 

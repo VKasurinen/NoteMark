@@ -1,7 +1,6 @@
-package com.vkasurinen.notemark.auth.presentation.register.components
+package com.vkasurinen.notemark.auth.presentation.login.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,33 +19,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.vkasurinen.notemark.R
-import com.vkasurinen.notemark.auth.presentation.register.RegisterAction
-import com.vkasurinen.notemark.auth.presentation.register.RegisterState
+import com.vkasurinen.notemark.auth.presentation.login.LoginAction
+import com.vkasurinen.notemark.auth.presentation.login.LoginState
+
 
 @Composable
-fun RegisterPortraitPhone(
-    state: RegisterState,
-    onAction: (RegisterAction) -> Unit
+fun LoginLandscapeTablet(
+    state: LoginState,
+    onAction: (LoginAction) -> Unit
 ) {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
     ) {
+        // Left column - Text content
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .weight(1f)
                 .fillMaxHeight()
-                .padding(top = 50.dp)
-                .clip(RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
+                .padding(top = 32.dp)
+                .clip(RoundedCornerShape(topStart = 24.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
+                    .padding(top = 25.dp, start = 40.dp)
             ) {
-
                 Text(
                     text = stringResource(R.string.create_account),
                     style = MaterialTheme.typography.headlineLarge,
@@ -56,7 +56,7 @@ fun RegisterPortraitPhone(
                     maxLines = 2,
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = stringResource(R.string.capture_toughts),
@@ -64,12 +64,26 @@ fun RegisterPortraitPhone(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     modifier = Modifier.fillMaxWidth()
                 )
+            }
+        }
 
-                Spacer(modifier = Modifier.height(30.dp))
-
-                RegisterForm(state, onAction)
-
+        // Right column - Form
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(top = 32.dp)
+                .clip(RoundedCornerShape(topEnd = 24.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 40.dp, top = 25.dp)
+            ) {
+                LoginForm(state = state, onAction = onAction)
             }
         }
     }
 }
+

@@ -24,7 +24,9 @@ class LandingViewModel : ViewModel() {
                 }
             }
             is LandingAction.OnLogInClick -> {
-                // Handle login action if needed
+                viewModelScope.launch {
+                    _events.emit(LandingEvent.NavigateToLogin)
+                }
             }
         }
     }

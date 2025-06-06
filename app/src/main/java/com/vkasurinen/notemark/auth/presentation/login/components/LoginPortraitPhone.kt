@@ -1,9 +1,11 @@
-package com.vkasurinen.notemark.auth.presentation.register.components
+package com.vkasurinen.notemark.auth.presentation.login.components
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,21 +15,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.vkasurinen.notemark.R
-import com.vkasurinen.notemark.auth.presentation.register.RegisterAction
-import com.vkasurinen.notemark.auth.presentation.register.RegisterState
+import com.vkasurinen.notemark.auth.presentation.login.LoginAction
+import com.vkasurinen.notemark.auth.presentation.login.LoginState
+
 
 @Composable
-fun RegisterPortraitPhone(
-    state: RegisterState,
-    onAction: (RegisterAction) -> Unit
+fun LoginPortraitPhone(
+    state: LoginState,
+    onAction: (LoginAction) -> Unit,
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -48,7 +50,7 @@ fun RegisterPortraitPhone(
             ) {
 
                 Text(
-                    text = stringResource(R.string.create_account),
+                    text = stringResource(R.string.log_in),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -67,7 +69,7 @@ fun RegisterPortraitPhone(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                RegisterForm(state, onAction)
+                LoginForm(state, onAction)
 
             }
         }

@@ -1,0 +1,71 @@
+package com.vkasurinen.notemark.auth.presentation.login
+
+import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.vkasurinen.notemark.auth.domain.UserDataValidator
+import com.vkasurinen.notemark.auth.domain.repository.AuthRepository
+import com.vkasurinen.notemark.auth.presentation.register.RegisterAction
+import com.vkasurinen.notemark.auth.presentation.register.RegisterEvent
+import com.vkasurinen.notemark.auth.presentation.register.RegisterState
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+class LoginViewModel(
+    private val authRepository: AuthRepository
+) : ViewModel() {
+
+    private var hasLoadedInitialData = false
+
+    private val _state = MutableStateFlow(LoginState())
+    val state = _state
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = LoginState()
+        )
+
+    private val eventChannel = Channel<LoginEvent>()
+    val events = eventChannel.receiveAsFlow()
+
+    init {
+        viewModelScope.launch {
+            combine(
+                snapshotFlow { _state.value.email.text },
+                snapshotFlow { _state.value.password.text }
+            ) { email, password ->
+                email.isNotEmpty() && password.isNotEmpty()
+            }.collect { isValid ->
+                _state.update { it.copy(canLogin = isValid) }
+            }
+        }
+    }
+
+    fun onAction(action: LoginAction) {
+        when (action) {
+            LoginAction.OnLoginClick -> {
+                // Navigate to the mainscreen / notescreen or maybe just raise a toast
+            }
+            LoginAction.OnRegisterClick -> {
+                viewModelScope.launch {
+                    eventChannel.send(LoginEvent.NavigateToRegister)
+                }
+            }
+            is LoginAction.OnTogglePasswordVisibilityClick -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        isPasswordVisible = !currentState.isPasswordVisible
+                    )
+                }
+            }
+        }
+    }
+
+}

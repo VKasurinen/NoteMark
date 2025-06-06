@@ -8,6 +8,7 @@ import com.vkasurinen.notemark.auth.domain.PatternValidator
 import com.vkasurinen.notemark.auth.domain.UserDataValidator
 import com.vkasurinen.notemark.auth.domain.repository.AuthRepository
 import com.vkasurinen.notemark.auth.presentation.landing.LandingViewModel
+import com.vkasurinen.notemark.auth.presentation.login.LoginViewModel
 import com.vkasurinen.notemark.auth.presentation.register.RegisterViewModel
 import com.vkasurinen.notemark.core.data.auth.EncryptedSessionStorage
 import com.vkasurinen.notemark.core.data.networking.HttpClientFactory
@@ -29,6 +30,7 @@ val authModule = module {
 
 //    viewModelOf(::RegisterViewModel)
     viewModel { RegisterViewModel(get(), get()) }
+    viewModel { LoginViewModel(get()) }
     viewModelOf(::LandingViewModel)
 
 }

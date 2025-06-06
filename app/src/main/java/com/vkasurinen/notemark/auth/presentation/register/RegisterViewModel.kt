@@ -93,7 +93,9 @@ class RegisterViewModel(
     fun onAction(action: RegisterAction) {
         when (action) {
             RegisterAction.OnLoginClick -> {
-                // Handle navigation to login screen
+                viewModelScope.launch {
+                    eventChannel.send(RegisterEvent.NavigateToLogin)
+                }
             }
 
             RegisterAction.OnRegisterClick -> register()

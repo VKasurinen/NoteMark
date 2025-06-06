@@ -6,6 +6,11 @@ interface NavigationRoute {
     val route: String
 
     @Serializable
+    data object Landing : NavigationRoute {
+        override val route: String = "landing"
+    }
+
+    @Serializable
     data object Login : NavigationRoute {
         override val route: String = "login"
     }
