@@ -8,6 +8,7 @@ import com.vkasurinen.notemark.auth.data.requests.RegisterRequest
 import com.vkasurinen.notemark.auth.domain.repository.AuthRepository
 import com.vkasurinen.notemark.core.domain.AuthInfo
 import com.vkasurinen.notemark.core.domain.SessionStorage
+import io.ktor.client.statement.bodyAsText
 
 class AuthRepositoryImpl(
     private val authApi: AuthApi,
@@ -46,18 +47,18 @@ class AuthRepositoryImpl(
         password: String
     ): Result<Unit> {
         return try {
-            authApi.register(
-                RegisterRequest(
-                    username = username,
-                    email = email,
-                    password = password
-                )
-            )
-            Result.Success(Unit)
+            val response = authApi.register(RegisterRequest(username, email, password))
+            if (response.status.value in 200..299) {
+                Result.Success(Unit)
+            } else {
+                val errorBody = response.bodyAsText()
+                Result.Error("Registration failed: $errorBody")
+            }
         } catch (e: Exception) {
             Result.Error(e.message ?: "An error occurred")
         }
     }
+
 
 
 }

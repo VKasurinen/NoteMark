@@ -135,12 +135,12 @@ class RegisterViewModel(
 
             when (result) {
                 is Result.Error -> {
-                    val errorMessage = if (result.message == "Conflict") {
-                        "Email already exists"
+                    val errorMessage = result.message ?: "An error occurred when creating an account"
+                    if (errorMessage.contains("already exists", ignoreCase = true)) {
+                        eventChannel.send(RegisterEvent.Error(UiText.Dynamic("A user with that email or username already exists.")))
                     } else {
-                        "An error occurred when creating an account"
+                        eventChannel.send(RegisterEvent.Error(UiText.Dynamic(errorMessage)))
                     }
-                    eventChannel.send(RegisterEvent.Error(UiText.Dynamic(errorMessage)))
                 }
                 is Result.Success -> {
                     eventChannel.send(RegisterEvent.RegistrationSuccess)
