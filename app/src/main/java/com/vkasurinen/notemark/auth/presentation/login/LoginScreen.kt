@@ -132,7 +132,9 @@ fun LoginScreen(
 private fun Preview() {
     NoteMarkTheme {
         LoginScreen(
-            state = LoginState(),
+            state = LoginState(
+                isLoading = false
+            ),
             onAction = {}
         )
     }

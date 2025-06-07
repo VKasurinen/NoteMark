@@ -30,7 +30,7 @@ val authModule = module {
 
 //    viewModelOf(::RegisterViewModel)
     viewModel { RegisterViewModel(get(), get()) }
-    viewModel { LoginViewModel(get()) }
+    viewModel { LoginViewModel(get(), get()) }
     viewModelOf(::LandingViewModel)
 
 }

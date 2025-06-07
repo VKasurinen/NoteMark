@@ -128,13 +128,13 @@ class RegisterViewModel(
                     val errorMessage = if (result.message == "Conflict") {
                         "Email already exists"
                     } else {
-                        result.message ?: "An unknown error occurred"
+                        "An error occurred when creating an account"
+//                        result.message ?: "An unknown error occurred"
                     }
                     eventChannel.send(RegisterEvent.Error(UiText.Dynamic(errorMessage)))
                 }
                 is Result.Success -> {
                     eventChannel.send(RegisterEvent.RegistrationSuccess)
-                    Log.d("RegisterViewmodel", "Registration completed succefully")
                 }
 
                 is Result.Loading -> {

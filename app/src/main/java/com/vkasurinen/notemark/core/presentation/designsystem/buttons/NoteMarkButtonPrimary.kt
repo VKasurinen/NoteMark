@@ -1,22 +1,18 @@
 package com.vkasurinen.notemark.core.presentation.designsystem.buttons
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,11 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vkasurinen.notemark.R
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
-import org.koin.core.component.getScopeName
 
-enum class ButtonVariant {
-    PRIMARY, SECONDARY
-}
 
 @Composable
 fun NoteMarkButton(
@@ -44,9 +36,10 @@ fun NoteMarkButton(
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
     iconTint: Color? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    isLoading: Boolean = false
 ) {
-    val colors = if (enabled) {
+    val colors = if (enabled && !isLoading) {
         ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -58,14 +51,18 @@ fun NoteMarkButton(
         )
     }
 
-    val defaultIconTint = if (enabled) {
+    val defaultIconTint = if (enabled && !isLoading) {
         MaterialTheme.colorScheme.onPrimary
     } else {
         MaterialTheme.colorScheme.onSurface
     }
 
     Button(
-        onClick = onClick,
+        onClick = {
+            if (!isLoading) {
+                onClick()
+            }
+        },
         modifier = modifier
             .height(IntrinsicSize.Min),
         shape = RoundedCornerShape(10.dp),
@@ -74,35 +71,43 @@ fun NoteMarkButton(
             defaultElevation = 0.dp,
             pressedElevation = 2.dp
         ),
-        enabled = enabled
+        enabled = enabled && !isLoading
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            startIcon?.let { icon ->
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = iconTint ?: defaultIconTint,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-
-            Text(
-                text = text,
-                modifier = Modifier.padding(horizontal = 8.dp)
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 2.dp
             )
+        } else {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                startIcon?.let { icon ->
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconTint ?: defaultIconTint,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
 
-            endIcon?.let { icon ->
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = iconTint ?: defaultIconTint,
-                    modifier = Modifier.size(18.dp)
+                Text(
+                    text = text,
+                    modifier = Modifier.padding(horizontal = 8.dp)
                 )
+
+                endIcon?.let { icon ->
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconTint ?: defaultIconTint,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
             }
         }
     }

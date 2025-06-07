@@ -27,7 +27,7 @@ fun LoginForm(
     NoteTextField(
         label = stringResource(R.string.email),
         state = state.email,
-        placeholder = "john.doe@example.com",
+        placeholder = "john.doe@example.com"
     )
 
     Spacer(modifier = Modifier.height(10.dp))
@@ -46,9 +46,10 @@ fun LoginForm(
 
     NoteMarkButton(
         text = "Log In",
-        onClick = { onAction(LoginAction.OnLoginClick)},
+        onClick = { onAction(LoginAction.OnLoginClick) },
         modifier = Modifier.fillMaxWidth(),
-        enabled = state.canLogin
+        enabled = state.canLogin,
+        isLoading = state.isLoading
     )
 
     Spacer(modifier = Modifier.height(20.dp))

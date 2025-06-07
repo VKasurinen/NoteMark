@@ -3,7 +3,6 @@ package com.vkasurinen.notemark.core.data.networking
 import com.vkasurinen.notemark.auth.data.responses.LoginResponse
 import com.vkasurinen.notemark.core.domain.AuthInfo
 import com.vkasurinen.notemark.core.domain.SessionStorage
-import com.vkasurinen.notemark.core.domain.util.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
@@ -12,7 +11,6 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging

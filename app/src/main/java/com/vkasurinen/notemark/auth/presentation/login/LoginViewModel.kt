@@ -21,7 +21,8 @@ import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.core.presentation.util.UiText
 
 class LoginViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userDataValidator: UserDataValidator
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -40,10 +41,13 @@ class LoginViewModel(
     init {
         viewModelScope.launch {
             combine(
-                snapshotFlow { _state.value.email.text },
-                snapshotFlow { _state.value.password.text }
+                snapshotFlow { _state.value.email.text.toString() },
+                snapshotFlow { _state.value.password.text.toString() }
             ) { email, password ->
-                email.isNotEmpty() && password.isNotEmpty()
+                val isEmailValid = userDataValidator.isValidEmail(email)
+                val isPasswordNotEmpty = password.isNotEmpty()
+                _state.update { it.copy(isEmailValid = isEmailValid) }
+                isEmailValid && isPasswordNotEmpty
             }.collect { isValid ->
                 _state.update { it.copy(canLogin = isValid) }
             }
@@ -81,7 +85,7 @@ class LoginViewModel(
 
             when (result) {
                 is Result.Error -> {
-                    eventChannel.send(LoginEvent.Error(UiText.Dynamic(result.message ?: "Login failed")))
+                    eventChannel.send(LoginEvent.Error(UiText.Dynamic("Invalid login credentials")))
                 }
                 is Result.Success -> {
                     eventChannel.send(LoginEvent.LoginSuccess)
