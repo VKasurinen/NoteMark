@@ -1,5 +1,7 @@
 package com.vkasurinen.notemark.auth.data.api
 
+import android.util.Log
+import com.vkasurinen.notemark.BuildConfig
 import com.vkasurinen.notemark.auth.data.requests.LoginRequest
 import com.vkasurinen.notemark.auth.data.requests.RegisterRequest
 import com.vkasurinen.notemark.auth.data.responses.LoginResponse
@@ -9,19 +11,39 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import timber.log.Timber
 
-class AuthApi(private val httpClient: HttpClient) {
+class AuthApi(
+    private val httpClient: HttpClient
+) {
+
 
     suspend fun register(request: RegisterRequest): HttpResponse {
-        return httpClient.post("https://notemark.pl-coding.com/api/auth/register") {
-            contentType(ContentType.Application.Json)
-            setBody(request)
+        return try {
+            val response = httpClient.post("https://notemark.pl-coding.com/api/auth/register") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+            Timber.tag("AuthApi").d("Request: $request, Response: ${response.status}")
+            response
+        } catch (e: Exception) {
+            Timber.tag("AuthApi").e("Error: ${e.message}")
+            throw e
         }
     }
 
     suspend fun login(request: LoginRequest): LoginResponse {
-        return httpClient.post("https://notemark.pl-coding.com/api/auth/login") {
-            setBody(request)
-        }.body()
+        return try {
+            Timber.tag("AuthApi").d("Sending login request: $request")
+            val response: LoginResponse = httpClient.post("https://notemark.pl-coding.com/api/auth/login") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.body()
+            Timber.tag("AuthApi").d("Login successful: $response")
+            response
+        } catch (e: Exception) {
+            Timber.tag("AuthApi").e(e, "Login failed")
+            throw e
+        }
     }
 }

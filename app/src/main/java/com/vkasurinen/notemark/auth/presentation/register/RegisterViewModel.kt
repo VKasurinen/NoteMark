@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.core.presentation.util.UiText
+import timber.log.Timber
 
 class RegisterViewModel(
     private val userDataValidator: UserDataValidator,
@@ -56,8 +57,8 @@ class RegisterViewModel(
     }
 
     private fun validateForm(
-        email: String,
         username: String,
+        email: String,
         password: String,
         confirmPassword: String,
         isRegistering: Boolean
@@ -115,12 +116,21 @@ class RegisterViewModel(
 
     fun register() {
         viewModelScope.launch {
+            Timber.d("Starting registration process...")
             _state.update { it.copy(isRegistering = true) }
+
+            val username = _state.value.username.text.toString().trim()
+            val email = _state.value.email.text.toString().trim()
+            val password = _state.value.password.text.toString()
+
+            Timber.d("Registering with username: $username, email: $email")
+
             val result = authRepository.register(
-                email = _state.value.email.text.toString().trim(),
-                username = _state.value.username.text.toString().trim(),
-                password = _state.value.password.text.toString()
+                username = username,
+                email = email,
+                password = password
             )
+
             _state.update { it.copy(isRegistering = false) }
 
             when (result) {
@@ -129,21 +139,25 @@ class RegisterViewModel(
                         "Email already exists"
                     } else {
                         "An error occurred when creating an account"
-//                        result.message ?: "An unknown error occurred"
                     }
+
+                    Timber.e("Registration failed: ${result.message}")
                     eventChannel.send(RegisterEvent.Error(UiText.Dynamic(errorMessage)))
                 }
+
                 is Result.Success -> {
+                    Timber.d("Registration successful")
                     eventChannel.send(RegisterEvent.RegistrationSuccess)
                 }
 
                 is Result.Loading -> {
+                    Timber.d("Registration loading state: ${result.isLoading}")
                     _state.update { it.copy(isRegistering = result.isLoading) }
                 }
             }
+
+            Timber.d("Registration process finished.")
         }
     }
-
-
 
 }

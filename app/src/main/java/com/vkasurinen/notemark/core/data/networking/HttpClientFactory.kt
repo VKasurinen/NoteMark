@@ -1,5 +1,6 @@
 package com.vkasurinen.notemark.core.data.networking
 
+import com.vkasurinen.notemark.BuildConfig
 import com.vkasurinen.notemark.auth.data.responses.LoginResponse
 import com.vkasurinen.notemark.core.domain.AuthInfo
 import com.vkasurinen.notemark.core.domain.SessionStorage
@@ -7,10 +8,12 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -21,13 +24,14 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
 import timber.log.Timber
 
 class HttpClientFactory(
     private val sessionStorage: SessionStorage
 ) {
 
-    fun build(engine: HttpClientEngine = CIO.create()): HttpClient {
+    fun build(engine: HttpClientEngine = OkHttp.create()): HttpClient {
         return HttpClient(engine) {
             install(ContentNegotiation) {
                 json(
@@ -64,7 +68,7 @@ class HttpClientFactory(
                                         refreshToken = tokenPair?.refreshToken ?: ""
                                     )
                                 )
-                                header("Debug", true)
+//                                header("Debug", true)
                             }.body()
 
                             val newAuthInfo = AuthInfo(
@@ -86,6 +90,9 @@ class HttpClientFactory(
                         }
                     }
                 }
+            }
+            defaultRequest {
+                header("X-User-Email", BuildConfig.USER_EMAIL)
             }
         }
     }

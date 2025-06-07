@@ -37,14 +37,13 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-        testRegister()
     }
 
     private fun testRegister() {
         lifecycleScope.launch(Dispatchers.IO) {
             val result = authRepository.register(
-                username = "VKasurinen",
-                email = "kokeilu@test.com",
+                username = "VKasurinen123",
+                email = "kokeilu1234@test.com",
                 password = "Test12345",
             )
             when (result) {

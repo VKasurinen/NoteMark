@@ -48,8 +48,8 @@ class AuthRepositoryImpl(
         return try {
             authApi.register(
                 RegisterRequest(
-                    email = email,
                     username = username,
+                    email = email,
                     password = password
                 )
             )
