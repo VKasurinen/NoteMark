@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.core.presentation.util.UiText
+import kotlinx.coroutines.delay
 
 class LoginViewModel(
     private val authRepository: AuthRepository,
@@ -59,11 +60,13 @@ class LoginViewModel(
             LoginAction.OnLoginClick -> {
                 login()
             }
+
             LoginAction.OnRegisterClick -> {
                 viewModelScope.launch {
                     eventChannel.send(LoginEvent.NavigateToRegister)
                 }
             }
+
             is LoginAction.OnTogglePasswordVisibilityClick -> {
                 _state.update { currentState ->
                     currentState.copy(
@@ -76,20 +79,25 @@ class LoginViewModel(
 
     private fun login() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoggingIn = true) }
+            _state.update { it.copy(isLoggingIn = true, isLoading = true) }
+
+            delay(2000L)
+
             val result = authRepository.login(
                 email = _state.value.email.text.toString().trim(),
                 password = _state.value.password.text.toString()
             )
-            _state.update { it.copy(isLoggingIn = false) }
+            _state.update { it.copy(isLoggingIn = false, isLoading = false) }
 
             when (result) {
                 is Result.Error -> {
                     eventChannel.send(LoginEvent.Error(UiText.Dynamic("Invalid login credentials")))
                 }
+
                 is Result.Success -> {
                     eventChannel.send(LoginEvent.LoginSuccess)
                 }
+
                 is Result.Loading -> Unit // Handled by state update
             }
         }

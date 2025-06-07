@@ -15,7 +15,8 @@ data class RegisterState(
     val isPassword2Visible: Boolean = false,
     val passwordValidationState: PasswordValidationState = PasswordValidationState(),
     val isRegistering: Boolean = false,
-    val canRegister: Boolean = false
+    val canRegister: Boolean = false,
+    val isLoading: Boolean = false
 ) {
     val isPasswordMatching: Boolean
         get() = password.text == password2.text && password.text.isNotEmpty()

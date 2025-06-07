@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.core.presentation.util.UiText
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 class RegisterViewModel(
@@ -114,16 +115,15 @@ class RegisterViewModel(
         }
     }
 
-    fun register() {
+    private fun register() {
         viewModelScope.launch {
-            Timber.d("Starting registration process...")
-            _state.update { it.copy(isRegistering = true) }
+            _state.update { it.copy(isRegistering = true, isLoading = true) }
+
+            delay(2000L)
 
             val username = _state.value.username.text.toString().trim()
             val email = _state.value.email.text.toString().trim()
             val password = _state.value.password.text.toString()
-
-            Timber.d("Registering with username: $username, email: $email")
 
             val result = authRepository.register(
                 username = username,
@@ -131,7 +131,7 @@ class RegisterViewModel(
                 password = password
             )
 
-            _state.update { it.copy(isRegistering = false) }
+            _state.update { it.copy(isRegistering = false, isLoading = false) }
 
             when (result) {
                 is Result.Error -> {
@@ -140,23 +140,13 @@ class RegisterViewModel(
                     } else {
                         "An error occurred when creating an account"
                     }
-
-                    Timber.e("Registration failed: ${result.message}")
                     eventChannel.send(RegisterEvent.Error(UiText.Dynamic(errorMessage)))
                 }
-
                 is Result.Success -> {
-                    Timber.d("Registration successful")
                     eventChannel.send(RegisterEvent.RegistrationSuccess)
                 }
-
-                is Result.Loading -> {
-                    Timber.d("Registration loading state: ${result.isLoading}")
-                    _state.update { it.copy(isRegistering = result.isLoading) }
-                }
+                is Result.Loading -> Unit
             }
-
-            Timber.d("Registration process finished.")
         }
     }
 

@@ -39,7 +39,7 @@ fun NoteMarkButton(
     enabled: Boolean = true,
     isLoading: Boolean = false
 ) {
-    val colors = if (enabled && !isLoading) {
+    val colors = if (enabled) {
         ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -51,7 +51,7 @@ fun NoteMarkButton(
         )
     }
 
-    val defaultIconTint = if (enabled && !isLoading) {
+    val defaultIconTint = if (enabled) {
         MaterialTheme.colorScheme.onPrimary
     } else {
         MaterialTheme.colorScheme.onSurface
@@ -59,19 +59,18 @@ fun NoteMarkButton(
 
     Button(
         onClick = {
-            if (!isLoading) {
+            if (!isLoading && enabled) {
                 onClick()
             }
         },
-        modifier = modifier
-            .height(IntrinsicSize.Min),
+        modifier = modifier.height(IntrinsicSize.Min),
         shape = RoundedCornerShape(10.dp),
         colors = colors,
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
             pressedElevation = 2.dp
         ),
-        enabled = enabled && !isLoading
+        enabled = enabled
     ) {
         if (isLoading) {
             CircularProgressIndicator(
@@ -112,6 +111,8 @@ fun NoteMarkButton(
         }
     }
 }
+
+
 
 @Preview(showBackground = true)
 //@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

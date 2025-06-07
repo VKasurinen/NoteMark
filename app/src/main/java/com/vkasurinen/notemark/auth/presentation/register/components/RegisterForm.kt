@@ -78,7 +78,8 @@ fun RegisterForm(
         text = "Create account",
         onClick = { onAction(RegisterAction.OnRegisterClick) },
         modifier = Modifier.fillMaxWidth(),
-        enabled = state.canRegister
+        enabled = state.canRegister,
+        isLoading = state.isLoading
     )
 
     Spacer(modifier = Modifier.height(20.dp))
