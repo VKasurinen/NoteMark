@@ -1,7 +1,5 @@
 package com.vkasurinen.notemark.auth.data.api
 
-import android.util.Log
-import com.vkasurinen.notemark.BuildConfig
 import com.vkasurinen.notemark.auth.data.requests.LoginRequest
 import com.vkasurinen.notemark.auth.data.requests.RegisterRequest
 import com.vkasurinen.notemark.auth.data.responses.LoginResponse
@@ -39,7 +37,7 @@ class AuthApi(
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()
-            Timber.tag("AuthApi").d("Login successful: $response")
+            Timber.tag("AuthApi").d("Login successful")
             response
         } catch (e: Exception) {
             Timber.tag("AuthApi").e(e, "Login failed")
