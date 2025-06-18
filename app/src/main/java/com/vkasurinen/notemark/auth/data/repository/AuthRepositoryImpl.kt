@@ -23,7 +23,7 @@ class AuthRepositoryImpl(
             val response = authApi.login(
                 LoginRequest(
                     email = email,
-                    password = password
+                    password = password,
                 )
             )
 

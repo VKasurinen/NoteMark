@@ -80,8 +80,6 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
 
-    implementation(libs.ktor.client.auth)
-
     // DI - Koin
     implementation(libs.bundles.koin)
 
@@ -96,8 +94,11 @@ dependencies {
     implementation(libs.timber)
 
     //Ktor
+    implementation(libs.ktor.client.auth)
     implementation(libs.bundles.ktor)
 
     implementation(libs.androidx.security.crypto)
     implementation(libs.kotlinx.coroutines.android)
+
+    implementation(libs.material.icons.extended)
 }

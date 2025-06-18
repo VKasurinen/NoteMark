@@ -1,5 +1,7 @@
 package com.vkasurinen.notemark.auth.presentation.login
 
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,14 +21,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.core.presentation.util.UiText
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
-class LoginViewModel(
+class LoginViewModel @SuppressLint("StaticFieldLeak") constructor(
     private val authRepository: AuthRepository,
-    private val userDataValidator: UserDataValidator
+    private val userDataValidator: UserDataValidator,
 ) : ViewModel() {
-
-    private var hasLoadedInitialData = false
 
     private val _state = MutableStateFlow(LoginState())
     val state = _state
@@ -95,6 +97,8 @@ class LoginViewModel(
                 }
 
                 is Result.Success -> {
+                    val username = result.data?.username
+                    _state.update { it.copy(username = username) }
                     eventChannel.send(LoginEvent.LoginSuccess)
                 }
 

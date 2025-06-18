@@ -10,4 +10,5 @@ data class LoginState(
     val canLogin: Boolean = false,
     val isLoggingIn: Boolean = false,
     val isLoading: Boolean = false,
+    val username: String? = null
 )

@@ -61,14 +61,13 @@ class HttpClientFactory(
                     refreshTokens {
                         val tokenPair = sessionStorage.get()
                         try {
-                            val response: LoginResponse = client.post("https://notemark.pl-coding.com/api/auth/refresh") {
+                            val response: RefreshTokenResponse = client.post("https://notemark.pl-coding.com/api/auth/refresh") {
                                 contentType(ContentType.Application.Json)
                                 setBody(
                                     RefreshTokenRequest(
                                         refreshToken = tokenPair?.refreshToken ?: ""
                                     )
                                 )
-//                                header("Debug", true)
                             }.body()
 
                             val newAuthInfo = AuthInfo(
