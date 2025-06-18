@@ -83,8 +83,6 @@ class LoginViewModel @SuppressLint("StaticFieldLeak") constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoggingIn = true, isLoading = true) }
 
-            delay(2000L)
-
             val result = authRepository.login(
                 email = _state.value.email.text.toString().trim(),
                 password = _state.value.password.text.toString()
@@ -97,9 +95,8 @@ class LoginViewModel @SuppressLint("StaticFieldLeak") constructor(
                 }
 
                 is Result.Success -> {
-                    val username = result.data?.username
-                    _state.update { it.copy(username = username) }
-                    eventChannel.send(LoginEvent.LoginSuccess)
+                    val username = result.data?.username ?: "Guest"
+                    eventChannel.send(LoginEvent.LoginSuccess(username))
                 }
 
                 is Result.Loading -> Unit // Handled by state update
