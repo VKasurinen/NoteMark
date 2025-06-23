@@ -2,10 +2,9 @@
     ExperimentalMaterial3Api::class
 )
 
-package com.vkasurinen.notemark.notes.presentation
+package com.vkasurinen.notemark.notes.presentation.notes_overview
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,27 +13,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.vkasurinen.notemark.core.presentation.designsystem.layouts.NoteMarkScaffold
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
-import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
-import com.vkasurinen.notemark.notes.presentation.components.UserInitialsBox
-import com.vkasurinen.notemark.notes.presentation.components.getUserInitials
+import com.vkasurinen.notemark.notes.presentation.notes_overview.components.UserInitialsBox
+import com.vkasurinen.notemark.notes.presentation.notes_overview.components.getUserInitials
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -42,7 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import com.vkasurinen.notemark.R
-import com.vkasurinen.notemark.notes.presentation.components.NoteCard
+import com.vkasurinen.notemark.notes.presentation.notes_overview.components.NoteCard
 
 @Composable
 fun NotesScreenRoot(

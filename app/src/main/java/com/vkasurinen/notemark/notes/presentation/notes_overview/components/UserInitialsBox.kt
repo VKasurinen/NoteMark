@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation.components
+package com.vkasurinen.notemark.notes.presentation.notes_overview.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation
+package com.vkasurinen.notemark.notes.presentation.notes_overview
 
 sealed interface NotesAction {
     data class UpdateUsername(val username: String) : NotesAction

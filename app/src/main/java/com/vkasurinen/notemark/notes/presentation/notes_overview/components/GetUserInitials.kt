@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation.components
+package com.vkasurinen.notemark.notes.presentation.notes_overview.components
 
 fun getUserInitials(username: String): String {
     val words = username.trim().split(" ")

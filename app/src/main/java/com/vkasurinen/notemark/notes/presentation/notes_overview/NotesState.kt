@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation
+package com.vkasurinen.notemark.notes.presentation.notes_overview
 
 data class Note(
     val date: String,

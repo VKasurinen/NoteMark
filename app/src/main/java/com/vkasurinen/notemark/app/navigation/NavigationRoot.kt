@@ -1,12 +1,6 @@
 package com.vkasurinen.notemark.app.navigation
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,7 +9,7 @@ import androidx.navigation.navArgument
 import com.vkasurinen.notemark.auth.presentation.landing.LandingScreenRoot
 import com.vkasurinen.notemark.auth.presentation.login.LoginScreenRoot
 import com.vkasurinen.notemark.auth.presentation.register.RegisterScreenRoot
-import com.vkasurinen.notemark.notes.presentation.NotesScreenRoot
+import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesScreenRoot
 
 @Composable
 fun NavigationRoot(
