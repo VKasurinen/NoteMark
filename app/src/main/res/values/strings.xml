@@ -9,4 +9,5 @@
     <string name="hide_password">Hide password</string>
     <string name="show_password">Show password</string>
     <string name="log_in">Log In</string>
+    <string name="empty_board">You\'ve got an empty board,\nlet\'s place your first note on it!</string>
 </resources>

@@ -4,7 +4,9 @@ package com.vkasurinen.notemark.notes.presentation
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +33,12 @@ import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import com.vkasurinen.notemark.notes.presentation.components.UserInitialsBox
 import com.vkasurinen.notemark.notes.presentation.components.getUserInitials
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
+import com.vkasurinen.notemark.R
+import com.vkasurinen.notemark.notes.presentation.components.NoteCard
 
 @Composable
 fun NotesScreenRoot(
@@ -53,47 +61,77 @@ fun NotesScreenRoot(
     )
 }
 
-@Composable
-fun NotesScreen(
-    state: NotesState,
-    onAction: (NotesAction) -> Unit,
-) {
-    val initials = state.username?.let { getUserInitials(it) } ?: "NA"
 
-    NoteMarkScaffold(
-        topAppBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "NoteMark",
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                },
-                actions = {
-                    UserInitialsBox(
-                        initials = initials,
-                        modifier = Modifier.padding(end = 14.dp)
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-            )
-        },
-        onFabClick = {}
+    @Composable
+    fun NotesScreen(
+        state: NotesState,
+        onAction: (NotesAction) -> Unit,
     ) {
-        Column(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxSize()
-        ) {
-            Text("Welcome, ${state.username ?: "Guest"}")
+        val initials = state.username?.let { getUserInitials(it) } ?: "NA"
+
+        NoteMarkScaffold(
+            topAppBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "NoteMark",
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
+                    },
+                    actions = {
+                        UserInitialsBox(
+                            initials = initials,
+                            modifier = Modifier.padding(end = 14.dp)
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                )
+            },
+            onFabClick = {}
+        ) { innerPadding ->
+            if (state.notes.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.empty_board),
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        modifier = Modifier.padding(top = 100.dp)
+                    )
+                }
+            } else {
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Fixed(2),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalItemSpacing = 8.dp
+                ) {
+                    items(state.notes.size) { index ->
+                        val note = state.notes[index]
+                        NoteCard(
+                            date = note.date,
+                            title = note.title,
+                            description = note.description
+                        )
+                    }
+                }
+            }
         }
     }
-}
-
 
 @Preview(
     showBackground = true
@@ -102,7 +140,35 @@ fun NotesScreen(
 private fun Preview() {
     NoteMarkTheme {
         NotesScreen(
-            state = NotesState(),
+            state = NotesState(
+                notes = listOf(
+                    Note(
+                        date = "19 APR",
+                        title = "Meeting Notes",
+                        description = "Discuss project milestones and deadlines."
+                    ),
+                    Note(
+                        date = "20 APR",
+                        title = "Shopping List",
+                        description = "Milk, eggs, bread, and coffee."
+                    ),
+                    Note(
+                        date = "21 APR",
+                        title = "Workout Plan",
+                        description = "Morning run and evening yoga session."
+                    ),
+                    Note(
+                        date = "22 APR",
+                        title = "Book Recommendations",
+                        description = "Read 'Atomic Habits' and 'Deep Work'."
+                    ),
+                    Note(
+                        date = "23 APR",
+                        title = "Weekend Plans",
+                        description = "Visit the park and watch a movie."
+                    )
+                )
+            ),
             onAction = {}
         )
     }
