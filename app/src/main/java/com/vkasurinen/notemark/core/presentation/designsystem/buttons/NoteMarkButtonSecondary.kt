@@ -2,8 +2,13 @@ package com.vkasurinen.notemark.core.presentation.designsystem.buttons
 
 import android.content.res.Configuration
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -13,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,17 +31,22 @@ fun NoteMarkButtonSecondary(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    hasBorder: Boolean = true,
 ) {
-
-
     Button(
         onClick = onClick,
         modifier = modifier
             .height(IntrinsicSize.Min)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(10.dp)
+            .then(
+                if (hasBorder) {
+                    Modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                } else {
+                    Modifier
+                }
             ),
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
@@ -67,9 +78,26 @@ fun NoteMarkButtonSecondary(
 @Composable
 private fun NoteMarkButtonSecondaryPreview() {
     NoteMarkTheme {
-        NoteMarkButtonSecondary(
-            text = "Hello world!",
-            onClick = {},
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+        ) {
+            NoteMarkButtonSecondary(
+                text = "Hello world!",
+                onClick = {},
+                hasBorder = true // Preview with border
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            NoteMarkButtonSecondary(
+                text = "No Border!",
+                onClick = {},
+                hasBorder = false // Preview without border
+            )
+        }
     }
 }
