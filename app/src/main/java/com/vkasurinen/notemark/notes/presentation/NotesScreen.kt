@@ -1,7 +1,10 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class
+)
 
 package com.vkasurinen.notemark.notes.presentation
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +39,7 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import com.vkasurinen.notemark.R
 import com.vkasurinen.notemark.notes.presentation.components.NoteCard
@@ -62,77 +66,85 @@ fun NotesScreenRoot(
 }
 
 
-    @Composable
-    fun NotesScreen(
-        state: NotesState,
-        onAction: (NotesAction) -> Unit,
-    ) {
-        val initials = state.username?.let { getUserInitials(it) } ?: "NA"
+@Composable
+fun NotesScreen(
+    state: NotesState,
+    onAction: (NotesAction) -> Unit,
+) {
+    val initials = state.username?.let { getUserInitials(it) } ?: "NA"
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-        NoteMarkScaffold(
-            topAppBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = "NoteMark",
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                    },
-                    actions = {
-                        UserInitialsBox(
-                            initials = initials,
-                            modifier = Modifier.padding(end = 14.dp)
-                        )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                )
-            },
-            onFabClick = {}
-        ) { innerPadding ->
-            if (state.notes.isEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+    NoteMarkScaffold(
+        topAppBar = {
+            TopAppBar(
+                title = {
                     Text(
-                        text = stringResource(R.string.empty_board),
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        ),
-                        modifier = Modifier.padding(top = 100.dp)
-                    )
-                }
-            } else {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Fixed(2),
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalItemSpacing = 8.dp
-                ) {
-                    items(state.notes.size) { index ->
-                        val note = state.notes[index]
-                        NoteCard(
-                            date = note.date,
-                            title = note.title,
-                            description = note.description
+                        text = "NoteMark",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.SemiBold
                         )
-                    }
+                    )
+                },
+                actions = {
+                    UserInitialsBox(
+                        initials = initials,
+                        modifier = Modifier.padding(end = 14.dp)
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+            )
+        },
+        onFabClick = {}
+    ) { innerPadding ->
+        if (state.notes.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.empty_board),
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    modifier = Modifier.padding(top = 100.dp)
+                )
+            }
+        } else {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(if (isLandscape) 3 else 2),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalItemSpacing = 8.dp
+            ) {
+                items(state.notes.size) { index ->
+                    val note = state.notes[index]
+                    NoteCard(
+                        date = note.date,
+                        title = note.title,
+                        description = note.description
+                    )
                 }
             }
         }
     }
+}
 
+@Preview(
+    showBackground = true,
+    widthDp = 800,
+    heightDp = 400,
+    name = "Landscape"
+)
 @Preview(
     showBackground = true
 )
@@ -166,6 +178,11 @@ private fun Preview() {
                         date = "23 APR",
                         title = "Weekend Plans",
                         description = "Visit the park and watch a movie."
+                    ),
+                    Note(
+                        date = "24 APR",
+                        title = "Weekend Plans 2",
+                        description = "Visit 2 the park and watch a movie."
                     )
                 )
             ),
