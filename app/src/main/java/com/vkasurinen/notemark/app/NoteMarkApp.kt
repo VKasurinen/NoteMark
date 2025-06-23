@@ -4,6 +4,7 @@ import android.app.Application
 import com.vkasurinen.notemark.BuildConfig
 import com.vkasurinen.notemark.app.di.appModule
 import com.vkasurinen.notemark.auth.di.authModule
+import com.vkasurinen.notemark.core.database.di.databaseModule
 import com.vkasurinen.notemark.notes.di.notesModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,8 @@ class NoteMarkApp: Application() {
             modules(
                 appModule,
                 authModule,
-                notesModule
+                notesModule,
+                databaseModule
             )
         }
     }
