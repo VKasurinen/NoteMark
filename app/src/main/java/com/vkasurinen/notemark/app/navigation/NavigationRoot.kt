@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.vkasurinen.notemark.auth.presentation.landing.LandingScreenRoot
 import com.vkasurinen.notemark.auth.presentation.login.LoginScreenRoot
 import com.vkasurinen.notemark.auth.presentation.register.RegisterScreenRoot
+import com.vkasurinen.notemark.notes.presentation.notes_details.DetailRoot
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesScreenRoot
 
 @Composable
@@ -43,5 +44,18 @@ fun NavigationRoot(
                 username = backStackEntry.arguments?.getString("username")
             )
         }
+
+        composable(
+            route = "detail_screen/{noteId}",
+            arguments = listOf(
+                navArgument("noteId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
+            DetailRoot(navController = navController, noteId = noteId)
+        }
+
     }
 }

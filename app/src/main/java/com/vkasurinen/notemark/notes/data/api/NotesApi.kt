@@ -8,7 +8,9 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
-class NotesApi(private val httpClient: HttpClient) {
+class NotesApi(
+    private val httpClient: HttpClient
+) {
 
     suspend fun createNote(request: NoteRequest): NoteResponse {
         return httpClient.post("/api/notes") {

@@ -8,5 +8,5 @@ data class Note(
 
 data class NotesState(
     val username: String? = null,
-    val notes: List<Note> = emptyList()
+    val notes: List<Note?> = emptyList()
 )

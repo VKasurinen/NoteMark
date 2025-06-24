@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +45,6 @@ fun NotesScreenRoot(
     viewModel: NotesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     LaunchedEffect(username) {
         username?.let {
@@ -56,7 +54,9 @@ fun NotesScreenRoot(
 
     NotesScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            viewModel.onAction(action)
+        }
     )
 }
 
@@ -64,7 +64,7 @@ fun NotesScreenRoot(
 @Composable
 fun NotesScreen(
     state: NotesState,
-    onAction: (NotesAction) -> Unit,
+    onAction: (NotesAction) -> Unit
 ) {
     val initials = state.username?.let { getUserInitials(it) } ?: "NA"
     val configuration = LocalConfiguration.current
@@ -92,7 +92,7 @@ fun NotesScreen(
                 ),
             )
         },
-        onFabClick = {}
+        onFabClick = { onAction(NotesAction.CreateNewNote) }
     ) { innerPadding ->
         if (state.notes.isEmpty()) {
             Column(
@@ -123,11 +123,13 @@ fun NotesScreen(
             ) {
                 items(state.notes.size) { index ->
                     val note = state.notes[index]
-                    NoteCard(
-                        date = note.date,
-                        title = note.title,
-                        description = note.description
-                    )
+                    if (note != null) {
+                        NoteCard(
+                            date = note.date,
+                            title = note.title,
+                            description = note.description
+                        )
+                    }
                 }
             }
         }
@@ -181,7 +183,7 @@ private fun Preview() {
                     )
                 )
             ),
-            onAction = {}
+            onAction = {},
         )
     }
 }

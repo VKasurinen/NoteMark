@@ -44,22 +44,24 @@ import com.vkasurinen.notemark.core.presentation.designsystem.theme.Inter
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material3.AlertDialog
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 
 @Composable
 fun DetailRoot(
     navController: NavHostController,
-    originalTitle: String,
-    originalContent: String,
+    noteId: String,
     viewModel: DetailViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(noteId) {
+        viewModel.loadNoteDetails(noteId)
+    }
+
     DetailScreen(
         state = state,
-        originalTitle = originalTitle,
-        originalContent = originalContent,
         onAction = viewModel::onAction,
         navController = navController
     )
@@ -68,8 +70,6 @@ fun DetailRoot(
 @Composable
 fun DetailScreen(
     state: DetailState,
-    originalTitle: String,
-    originalContent: String,
     onAction: (DetailAction) -> Unit,
     navController: NavHostController
 ) {
@@ -89,7 +89,7 @@ fun DetailScreen(
         ) {
             IconButton(
                 onClick = {
-                    val hasChanges = state.title != originalTitle || state.content != originalContent
+                    val hasChanges = state.title != state.originalTitle || state.content != state.originalContent
                     if (hasChanges) {
                         showDiscardDialog = true
                     } else {
@@ -150,8 +150,6 @@ fun DetailScreen(
                     .padding(bottom = 8.dp)
             )
         }
-
-
     }
 
     if (showDiscardDialog) {
@@ -181,7 +179,6 @@ fun DetailScreen(
                 }
             }
         )
-
     }
 }
 
@@ -197,8 +194,6 @@ private fun Preview() {
                 originalTitle = "Original Note Title",
                 originalContent = "Original content of the note."
             ),
-            originalTitle = "Original Note Title",
-            originalContent = "Original content of the note.",
             onAction = {},
             navController = NavHostController(LocalContext.current)
         )
