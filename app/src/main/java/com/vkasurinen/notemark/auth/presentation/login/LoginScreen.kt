@@ -67,7 +67,7 @@ fun LoginScreenRoot(
             is LoginEvent.LoginSuccess -> {
                 Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
                 navController.navigate(NavigationRoute.Notes.createRoute(event.username)) {
-                    popUpTo(NavigationRoute.Notes.route) { inclusive = true }
+                    popUpTo(NavigationRoute.Login.route) { inclusive = true }
                     launchSingleTop = true
                 }
             }

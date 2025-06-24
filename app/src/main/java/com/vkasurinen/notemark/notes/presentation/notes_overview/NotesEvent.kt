@@ -1,5 +1,9 @@
 package com.vkasurinen.notemark.notes.presentation.notes_overview
 
-sealed interface NotesEvent {
+import com.vkasurinen.notemark.auth.presentation.login.LoginEvent
+import com.vkasurinen.notemark.core.presentation.util.UiText
 
+sealed class NotesEvent {
+    data class NavigateToDetail(val noteId: String) : NotesEvent()
+    data class Error(val error: UiText) : NotesEvent()
 }

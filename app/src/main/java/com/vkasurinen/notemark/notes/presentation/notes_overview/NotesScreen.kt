@@ -5,6 +5,7 @@
 package com.vkasurinen.notemark.notes.presentation.notes_overview
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,9 +34,14 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.vkasurinen.notemark.R
+import com.vkasurinen.notemark.app.navigation.NavigationRoute
+import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
+import com.vkasurinen.notemark.notes.domain.Note
 import com.vkasurinen.notemark.notes.presentation.notes_overview.components.NoteCard
 
 @Composable
@@ -45,7 +51,23 @@ fun NotesScreenRoot(
     viewModel: NotesViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is NotesEvent.NavigateToDetail -> {
+                navController.navigate("${NavigationRoute.Detail.route}/${event.noteId}") {
+                    popUpTo(NavigationRoute.Detail.route) {inclusive = true}
+                    launchSingleTop = true
+                }
+            }
+            is NotesEvent.Error -> {
+                Toast.makeText(context, event.error.asString(context), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // Update username in ViewModel when changed
     LaunchedEffect(username) {
         username?.let {
             viewModel.onAction(NotesAction.UpdateUsername(it))
@@ -59,6 +81,7 @@ fun NotesScreenRoot(
         }
     )
 }
+
 
 
 @Composable
@@ -116,7 +139,8 @@ fun NotesScreen(
                 columns = StaggeredGridCells.Fixed(if (isLandscape) 3 else 2),
                 modifier = Modifier
                     .padding(innerPadding)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
                 contentPadding = PaddingValues(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalItemSpacing = 8.dp
@@ -125,9 +149,9 @@ fun NotesScreen(
                     val note = state.notes[index]
                     if (note != null) {
                         NoteCard(
-                            date = note.date,
+                            date = note.createdAt,
                             title = note.title,
-                            description = note.description
+                            description = note.content
                         )
                     }
                 }
@@ -152,34 +176,46 @@ private fun Preview() {
             state = NotesState(
                 notes = listOf(
                     Note(
-                        date = "19 APR",
-                        title = "Meeting Notes",
-                        description = "Discuss project milestones and deadlines."
+                        id = "1",
+                        title = "Note 1",
+                        content = "Content of Note 1",
+                        createdAt = "2023-10-01",
+                        lastEditedAt = "2023-10-01"
                     ),
                     Note(
-                        date = "20 APR",
-                        title = "Shopping List",
-                        description = "Milk, eggs, bread, and coffee."
+                        id = "2",
+                        title = "Note 2",
+                        content = "Content of Note 2",
+                        createdAt = "2023-10-02",
+                        lastEditedAt = "2023-10-02"
                     ),
                     Note(
-                        date = "21 APR",
-                        title = "Workout Plan",
-                        description = "Morning run and evening yoga session."
+                        id = "3",
+                        title = "Note 3",
+                        content = "Content of Note 3",
+                        createdAt = "2023-10-03",
+                        lastEditedAt = "2023-10-03"
                     ),
                     Note(
-                        date = "22 APR",
-                        title = "Book Recommendations",
-                        description = "Read 'Atomic Habits' and 'Deep Work'."
+                        id = "4",
+                        title = "Note 4",
+                        content = "Content of Note 4",
+                        createdAt = "2023-10-04",
+                        lastEditedAt = "2023-10-04"
                     ),
                     Note(
-                        date = "23 APR",
-                        title = "Weekend Plans",
-                        description = "Visit the park and watch a movie."
+                        id = "5",
+                        title = "Note 5",
+                        content = "Content of Note 5",
+                        createdAt = "2023-10-05",
+                        lastEditedAt = "2023-10-05"
                     ),
                     Note(
-                        date = "24 APR",
-                        title = "Weekend Plans 2",
-                        description = "Visit 2 the park and watch a movie."
+                        id = "6",
+                        title = "Note 6",
+                        content = "Content of Note 6",
+                        createdAt = "2023-10-06",
+                        lastEditedAt = "2023-10-06"
                     )
                 )
             ),

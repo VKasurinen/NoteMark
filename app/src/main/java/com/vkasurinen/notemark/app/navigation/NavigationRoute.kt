@@ -25,4 +25,9 @@ interface NavigationRoute {
         override val route: String = "notes"
         fun createRoute(username: String) = "$route?username=$username"
     }
+
+    @Serializable
+    data object Detail : NavigationRoute {
+        override val route: String = "details"
+    }
 }

@@ -46,7 +46,7 @@ fun NavigationRoot(
         }
 
         composable(
-            route = "detail_screen/{noteId}",
+            route = "${NavigationRoute.Detail.route}/{noteId}",
             arguments = listOf(
                 navArgument("noteId") {
                     type = NavType.StringType

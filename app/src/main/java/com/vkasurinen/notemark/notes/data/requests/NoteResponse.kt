@@ -1,5 +1,8 @@
 package com.vkasurinen.notemark.notes.data.requests
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class NoteResponse(
     val id: String,
     val title: String,
