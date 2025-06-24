@@ -19,6 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 
 @Composable
@@ -39,7 +42,7 @@ fun NoteCard(
             .padding(12.dp)
     ) {
         Text(
-            text = date,
+            text = formatDate(date),
             color = MaterialTheme.colorScheme.primary,
             fontSize = 14.sp,
             fontWeight = FontWeight.W600
@@ -70,6 +73,17 @@ fun NoteCard(
 
     }
 
+}
+
+fun formatDate(date: String): String {
+    val parsedDate = LocalDate.parse(date)
+    val currentYear = LocalDate.now().year
+    val formatter = if (parsedDate.year == currentYear) {
+        DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())
+    } else {
+        DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
+    }
+    return parsedDate.format(formatter)
 }
 
 @Preview(

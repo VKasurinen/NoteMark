@@ -3,6 +3,7 @@ package com.vkasurinen.notemark.notes.presentation.notes_details
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -79,6 +80,7 @@ fun DetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(vertical = 24.dp)
     ) {
         Row(
             modifier = Modifier
@@ -147,7 +149,21 @@ fun DetailScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = 8.dp),
+                decorationBox = { innerTextField ->
+                    Box {
+                        if (state.content.isEmpty()) {
+                            Text(
+                                text = "Enter your content here...",
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
             )
         }
     }

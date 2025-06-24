@@ -147,13 +147,11 @@ fun NotesScreen(
             ) {
                 items(state.notes.size) { index ->
                     val note = state.notes[index]
-                    if (note != null) {
-                        NoteCard(
-                            date = note.createdAt,
-                            title = note.title,
-                            description = note.content
-                        )
-                    }
+                    NoteCard(
+                        date = note.createdAt,
+                        title = note.title,
+                        description = note.content
+                    )
                 }
             }
         }
@@ -180,14 +178,14 @@ private fun Preview() {
                         title = "Note 1",
                         content = "Content of Note 1",
                         createdAt = "2023-10-01",
-                        lastEditedAt = "2023-10-01"
+                        lastEditedAt = "2025-10-01"
                     ),
                     Note(
                         id = "2",
                         title = "Note 2",
                         content = "Content of Note 2",
-                        createdAt = "2023-10-02",
-                        lastEditedAt = "2023-10-02"
+                        createdAt = "2025-10-02",
+                        lastEditedAt = "2025-02-02"
                     ),
                     Note(
                         id = "3",
