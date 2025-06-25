@@ -78,6 +78,7 @@ class NotesViewModel(
                     _state.update { currentState ->
                         currentState.copy(notes = currentState.notes + response.data)
                     }
+                    loadNotes()
                     eventChannel.send(NotesEvent.NavigateToDetail(response.data.id))
                 } else {
                     eventChannel.send(NotesEvent.Error(UiText.Dynamic("Failed to create note")))
