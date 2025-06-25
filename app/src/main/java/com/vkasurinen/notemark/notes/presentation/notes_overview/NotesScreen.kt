@@ -56,9 +56,8 @@ fun NotesScreenRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is NotesEvent.NavigateToDetail -> {
-                navController.navigate("${NavigationRoute.Detail.route}/${event.noteId}"){
-
-                popUpTo(NavigationRoute.Detail.route) {inclusive = true}
+                navController.navigate("${NavigationRoute.Detail.route}/${event.noteId}") {
+                    popUpTo(NavigationRoute.Detail.route) { inclusive = true }
                     launchSingleTop = true
                 }
             }
@@ -68,7 +67,10 @@ fun NotesScreenRoot(
         }
     }
 
-    // Update username in ViewModel when changed
+    LaunchedEffect(Unit) {
+        viewModel.loadNotes()
+    }
+
     LaunchedEffect(username) {
         username?.let {
             viewModel.onAction(NotesAction.UpdateUsername(it))

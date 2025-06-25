@@ -2,14 +2,12 @@ package com.vkasurinen.notemark.notes.presentation.notes_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vkasurinen.notemark.core.database.mappers.toRequest
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.domain.Note
 import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -44,28 +42,26 @@ class DetailViewModel(
                     val currentState = _state.value
 
                     if (currentState.title.isBlank() || currentState.content.isBlank()) {
-                        val message = if (currentState.title.isBlank()) {
-                            "Title cannot be empty"
-                        } else {
-                            "Content cannot be empty"
-                        }
-                        eventChannel.send(DetailEvent.ShowValidationError(message))
+                        eventChannel.send(DetailEvent.ShowValidationError("Content cannot be empty"))
                         return@launch
                     }
 
                     val updatedNote = Note(
-                        id = currentState.id,
+                        id = noteId,
                         title = currentState.title,
                         content = currentState.content,
                         createdAt = currentState.createdAt,
                         lastEditedAt = getCurrentTimestamp()
                     )
 
-                    notesRepository.updateNote(updatedNote.toRequest())
-                    eventChannel.send(DetailEvent.NavigateToNotes)
+                    val result = notesRepository.updateNote(updatedNote)
+                    if (result is Result.Success) {
+                        eventChannel.send(DetailEvent.NavigateToNotes)
+                    } else {
+                        eventChannel.send(DetailEvent.ShowValidationError("Failed to update note"))
+                    }
                 }
             }
-
 
             is DetailAction.OnTitleChange -> {
                 _state.update { it.copy(title = action.title) }
@@ -74,17 +70,19 @@ class DetailViewModel(
                 _state.update { it.copy(content = action.content) }
             }
 
-            DetailAction.OnBackClick -> TODO()
+            DetailAction.OnBackClick -> {
+                // Handle back navigation logic
+            }
         }
     }
 
     fun loadNoteDetails(noteId: String) {
         viewModelScope.launch {
             try {
-                val response = notesRepository.getNotes(page = 1, size = Int.MAX_VALUE)
-                if (response is Result.Success) {
-                    val note = response.data?.notes?.find { it.id == noteId }
-                    note?.let {
+                val result = notesRepository.getNotes(1, 1)
+                if (result is Result.Success) {
+                    val note = result.data?.firstOrNull { it.id == noteId }
+                    if (note != null) {
                         _state.update {
                             it.copy(
                                 id = note.id,
@@ -107,5 +105,4 @@ class DetailViewModel(
     private fun getCurrentTimestamp(): String {
         return java.time.Instant.now().toString()
     }
-
 }
