@@ -1,8 +1,10 @@
 package com.vkasurinen.notemark.notes.data.api
 
+import com.vkasurinen.notemark.core.database.mappers.toDomain
 import com.vkasurinen.notemark.notes.data.requests.NoteRequest
 import com.vkasurinen.notemark.notes.data.requests.NoteResponse
 import com.vkasurinen.notemark.notes.data.requests.PaginatedNotesResponse
+import com.vkasurinen.notemark.notes.domain.Note
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -45,19 +47,41 @@ class NotesApi(
     }
 
     suspend fun getNotes(page: Int, size: Int): PaginatedNotesResponse {
-        try {
-            Timber.tag("NotesApi").d("getNotes() - Sending GET request with page: $page, size: $size")
+        return try {
+            Timber.d("getNotes(paginated) - page: $page, size: $size")
             val response = httpClient.get("https://notemark.pl-coding.com/api/notes") {
                 parameter("page", page)
                 parameter("size", size)
-            }.body<PaginatedNotesResponse>()
-            Timber.tag("NotesApi").d("getNotes() - Received response: $response")
-            return response
+            }.body<PaginatedNotesResponse>().also {
+                Timber.d("Paginated response: $it")
+            }
+
+            // Workaround: If empty but total > 0, try non-paginated
+            if (response.notes.isEmpty() && response.total > 0) {
+                Timber.w("Pagination bug detected, falling back to non-paginated request")
+                getNotesUnpaginated()
+            } else {
+                response
+            }
         } catch (e: Exception) {
-            Timber.tag("NotesApi").e(e, "getNotes() - Error during GET request")
+            Timber.e(e, "getNotes(paginated) failed")
             throw e
         }
     }
+
+    private suspend fun getNotesUnpaginated(): PaginatedNotesResponse {
+        return try {
+            Timber.d("getNotesUnpaginated() - trying without pagination")
+            httpClient.get("https://notemark.pl-coding.com/api/notes")
+                .body<PaginatedNotesResponse>().also {
+                    Timber.d("Unpaginated response: $it")
+                }
+        } catch (e: Exception) {
+            Timber.e(e, "getNotesUnpaginated() failed")
+            throw e
+        }
+    }
+
 
     suspend fun deleteNote(id: String) {
         try {

@@ -8,6 +8,9 @@ import com.vkasurinen.notemark.core.database.mappers.toRequest
 import com.vkasurinen.notemark.notes.domain.Note
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import timber.log.Timber
 
 class NotesRepositoryImpl(
     private val notesApi: NotesApi,
@@ -36,15 +39,17 @@ class NotesRepositoryImpl(
         }
     }
 
+
     override suspend fun getNotes(page: Int, size: Int): Result<List<Note>> {
         return try {
             val response = notesApi.getNotes(page, size)
-            val notes = response.notes.map { it.toDomain() }
-            Result.Success(notes)
+            Result.Success(response.notes.map { it.toDomain() })
         } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch notes")
             Result.Error(e.message ?: "Failed to fetch notes")
         }
     }
+
 
     override suspend fun deleteNote(id: String): Result<Unit> {
         return try {
