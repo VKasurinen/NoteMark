@@ -56,8 +56,9 @@ fun NotesScreenRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is NotesEvent.NavigateToDetail -> {
-                navController.navigate("${NavigationRoute.Detail.route}/${event.noteId}") {
-                    popUpTo(NavigationRoute.Detail.route) {inclusive = true}
+                navController.navigate("${NavigationRoute.Detail.route}/${event.noteId}"){
+
+                popUpTo(NavigationRoute.Detail.route) {inclusive = true}
                     launchSingleTop = true
                 }
             }
@@ -115,7 +116,12 @@ fun NotesScreen(
                 ),
             )
         },
-        onFabClick = { onAction(NotesAction.CreateNewNote) }
+        onFabClick = { onAction(NotesAction.CreateNewNote) },
+        containerColor = if (state.notes.isEmpty()) {
+            MaterialTheme.colorScheme.surfaceVariant
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+        }
     ) { innerPadding ->
         if (state.notes.isEmpty()) {
             Column(
@@ -139,8 +145,7 @@ fun NotesScreen(
                 columns = StaggeredGridCells.Fixed(if (isLandscape) 3 else 2),
                 modifier = Modifier
                     .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)),
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalItemSpacing = 8.dp

@@ -47,15 +47,12 @@ fun NavigationRoot(
 
         composable(
             route = "${NavigationRoute.Detail.route}/{noteId}",
-            arguments = listOf(
-                navArgument("noteId") {
-                    type = NavType.StringType
-                }
-            )
+            arguments = listOf(navArgument("noteId") { type = NavType.StringType })
         ) { backStackEntry ->
             val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
             DetailRoot(navController = navController, noteId = noteId)
         }
+
 
     }
 }

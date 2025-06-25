@@ -19,7 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -75,8 +77,9 @@ fun NoteCard(
 
 }
 
+
 fun formatDate(date: String): String {
-    val parsedDate = LocalDate.parse(date)
+    val parsedDate = Instant.parse(date).atZone(ZoneId.systemDefault()).toLocalDate()
     val currentYear = LocalDate.now().year
     val formatter = if (parsedDate.year == currentYear) {
         DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())

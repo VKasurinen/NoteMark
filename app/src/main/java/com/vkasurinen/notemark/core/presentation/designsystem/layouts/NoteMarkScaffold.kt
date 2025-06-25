@@ -28,6 +28,7 @@ fun NoteMarkScaffold(
     modifier: Modifier = Modifier,
     topAppBar: @Composable () -> Unit = {},
     onFabClick: () -> Unit = {},
+    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -53,7 +54,7 @@ fun NoteMarkScaffold(
                 )
             }
         },
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        containerColor = containerColor,
         modifier = modifier
     ) { padding ->
         content(padding)

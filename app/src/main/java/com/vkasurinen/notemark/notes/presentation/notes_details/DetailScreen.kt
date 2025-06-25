@@ -1,5 +1,6 @@
 package com.vkasurinen.notemark.notes.presentation.notes_details
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
@@ -46,20 +48,42 @@ import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkThem
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import com.vkasurinen.notemark.app.navigation.NavigationRoute
+import com.vkasurinen.notemark.core.presentation.designsystem.theme.SpaceGrotesk
+import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun DetailRoot(
     navController: NavHostController,
     noteId: String,
-    viewModel: DetailViewModel = koinViewModel()
+    viewModel: DetailViewModel = koinViewModel() { parametersOf(noteId)}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(noteId) {
         viewModel.loadNoteDetails(noteId)
     }
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is DetailEvent.NavigateToNotes -> {
+                navController.navigate(NavigationRoute.Notes.route) {
+                    popUpTo(NavigationRoute.Notes.route) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+
+            is DetailEvent.ShowValidationError -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     DetailScreen(
         state = state,
@@ -80,12 +104,12 @@ fun DetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(vertical = 24.dp)
+            .padding(top = 50.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(horizontal = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -97,12 +121,14 @@ fun DetailScreen(
                     } else {
                         navController.popBackStack()
                     }
-                }
+                },
+                modifier = Modifier.size(30.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Cross,
                     contentDescription = "Close",
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(22.dp)
                 )
             }
 
@@ -116,20 +142,22 @@ fun DetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 24.dp)
         ) {
             BasicTextField(
                 value = state.title,
                 onValueChange = { onAction(DetailAction.OnTitleChange(it)) },
                 textStyle = TextStyle(
-                    fontSize = 20.sp,
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = SpaceGrotesk
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             HorizontalDivider(
                 modifier = Modifier
@@ -138,13 +166,13 @@ fun DetailScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             BasicTextField(
                 value = state.content,
                 onValueChange = { onAction(DetailAction.OnContentChange(it)) },
                 textStyle = TextStyle(
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 ),
                 modifier = Modifier
@@ -174,25 +202,19 @@ fun DetailScreen(
             title = { Text("Discard Changes?") },
             text = { Text("You have unsaved changes. If you discard now, all changes will be lost.") },
             confirmButton = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    NoteMarkButtonTertiary(
-                        text = "Keep Editing",
-                        onClick = { showDiscardDialog = false }
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    NoteMarkButton(
-                        text = "Discard",
-                        onClick = {
-                            showDiscardDialog = false
-                            navController.popBackStack()
-                        }
-                    )
-                }
+                NoteMarkButton(
+                    text = "Discard",
+                    onClick = {
+                        showDiscardDialog = false
+                        navController.popBackStack()
+                    }
+                )
+            },
+            dismissButton = {
+                NoteMarkButtonSecondary(
+                    text = "Keep Editing",
+                    onClick = { showDiscardDialog = false }
+                )
             }
         )
     }
