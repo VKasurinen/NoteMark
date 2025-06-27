@@ -7,6 +7,7 @@ package com.vkasurinen.notemark.notes.presentation.notes_overview
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,6 +47,7 @@ import com.vkasurinen.notemark.notes.domain.Note
 import com.vkasurinen.notemark.notes.presentation.notes_overview.components.NoteCard
 import org.koin.compose.getKoin
 import org.koin.java.KoinJavaComponent.inject
+import timber.log.Timber
 
 @Composable
 fun NotesScreenRoot(
@@ -66,7 +68,7 @@ fun NotesScreenRoot(
         when (event) {
             is NotesEvent.NavigateToDetail -> {
                 navController.navigate("${NavigationRoute.Detail.route}/${event.noteId}") {
-                    popUpTo(NavigationRoute.Detail.route) { inclusive = true }
+                    popUpTo(NavigationRoute.Notes.route) { inclusive = false }
                     launchSingleTop = true
                 }
             }
@@ -154,7 +156,12 @@ fun NotesScreen(
                     NoteCard(
                         date = note.createdAt,
                         title = note.title,
-                        description = note.content
+                        description = note.content,
+                        modifier = Modifier
+                            .clickable {
+                                Timber.d("NoteCard clicked, ID: ${note.id}")
+                                onAction(NotesAction.NavigateToDetail(note.id))
+                            }
                     )
                 }
             }

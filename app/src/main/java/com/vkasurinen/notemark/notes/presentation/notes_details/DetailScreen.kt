@@ -202,21 +202,28 @@ fun DetailScreen(
             title = { Text("Discard Changes?") },
             text = { Text("You have unsaved changes. If you discard now, all changes will be lost.") },
             confirmButton = {
-                NoteMarkButton(
-                    text = "Discard",
-                    onClick = {
-                        showDiscardDialog = false
-                        navController.popBackStack()
-                    }
-                )
-            },
-            dismissButton = {
-                NoteMarkButtonSecondary(
-                    text = "Keep Editing",
-                    onClick = { showDiscardDialog = false }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    NoteMarkButtonTertiary(
+                        text = "Keep Editing",
+                        onClick = { showDiscardDialog = false }
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    NoteMarkButton(
+                        text = "Discard",
+                        onClick = {
+                            showDiscardDialog = false
+                            navController.popBackStack()
+                        }
+                    )
+                }
             }
         )
+
     }
 }
 

@@ -42,10 +42,15 @@ class NotesViewModel(
             is NotesAction.UpdateUsername -> {
                 _state.update { it.copy(username = action.username) }
             }
-
             NotesAction.CreateNewNote -> {
                 Timber.d("Creating new note")
                 createNewNote()
+            }
+            is NotesAction.NavigateToDetail -> {
+                Timber.d("Processing NavigateToDetail for note: ${action.noteId}")
+                viewModelScope.launch {
+                    eventChannel.send(NotesEvent.NavigateToDetail(action.noteId))
+                }
             }
         }
     }

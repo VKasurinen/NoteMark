@@ -37,6 +37,7 @@ fun NoteMarkButtonSecondary(
         onClick = onClick,
         modifier = modifier
             .height(IntrinsicSize.Min)
+//            .height(48.dp)
             .then(
                 if (hasBorder) {
                     Modifier.border(
@@ -61,7 +62,7 @@ fun NoteMarkButtonSecondary(
         Text(
             text = text,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(horizontal = 10.dp)
         )
     }
 }

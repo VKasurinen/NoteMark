@@ -33,14 +33,12 @@ fun NoteCard(
     title: String,
     description: String
 ) {
-
     Column(
-        modifier = Modifier
-//            .width(IntrinsicSize.Min)
+        modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .fillMaxWidth()
-            .then(Modifier.widthIn(max = 150.dp))
+            .widthIn(max = 150.dp)
             .padding(12.dp)
     ) {
         Text(
