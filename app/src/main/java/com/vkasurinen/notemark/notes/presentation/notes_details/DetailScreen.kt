@@ -48,8 +48,12 @@ import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkThem
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
 import com.vkasurinen.notemark.app.navigation.NavigationRoute
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.SpaceGrotesk
@@ -99,6 +103,18 @@ fun DetailScreen(
     navController: NavHostController
 ) {
     var showDiscardDialog by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+
+    val titleValue = remember(state.title) {
+        TextFieldValue(
+            text = state.title,
+            selection = TextRange(state.title.length)
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Column(
         modifier = Modifier
@@ -145,8 +161,10 @@ fun DetailScreen(
                 .padding(horizontal = 16.dp, vertical = 24.dp)
         ) {
             BasicTextField(
-                value = state.title,
-                onValueChange = { onAction(DetailAction.OnTitleChange(it)) },
+                value = titleValue,
+                onValueChange = {
+                    onAction(DetailAction.OnTitleChange(it.text))
+                },
                 textStyle = TextStyle(
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
@@ -155,6 +173,23 @@ fun DetailScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .focusRequester(focusRequester),
+                decorationBox = { titleTextField ->
+                    Box {
+                        if (state.title.isEmpty()) {
+                            Text(
+                                text = "Note Title",
+                                style = TextStyle(
+                                    fontSize = 30.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontFamily = SpaceGrotesk
+                                )
+                            )
+                        }
+                        titleTextField()
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -178,18 +213,18 @@ fun DetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
-                decorationBox = { innerTextField ->
+                decorationBox = { contentTextField ->
                     Box {
                         if (state.content.isEmpty()) {
                             Text(
-                                text = "Enter your content here...",
+                                text = "Tap to enter note content",
                                 style = TextStyle(
                                     fontSize = 16.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             )
                         }
-                        innerTextField()
+                        contentTextField()
                     }
                 }
             )
@@ -228,9 +263,10 @@ fun DetailScreen(
 }
 
 
+
 @Preview
 @Composable
-private fun Preview() {
+fun DetailScreenPreview() {
     NoteMarkTheme {
         DetailScreen(
             state = DetailState(
