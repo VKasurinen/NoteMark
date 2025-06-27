@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 data class AuthInfoSerializable(
     val accessToken: String,
     val refreshToken: String,
+    val username: String? = null
 )

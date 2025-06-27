@@ -51,28 +51,29 @@ class HttpClientFactory(
             install(Auth) {
                 bearer {
                     loadTokens {
-                        val tokenPair = sessionStorage.get()
+                        val authInfo = sessionStorage.get()
                         BearerTokens(
-                            accessToken = tokenPair?.accessToken ?: "",
-                            refreshToken = tokenPair?.refreshToken ?: ""
+                            accessToken = authInfo?.accessToken ?: "",
+                            refreshToken = authInfo?.refreshToken ?: ""
                         )
                     }
 
                     refreshTokens {
-                        val tokenPair = sessionStorage.get()
+                        val currentAuthInfo = sessionStorage.get()
                         try {
                             val response: RefreshTokenResponse = client.post("https://notemark.pl-coding.com/api/auth/refresh") {
                                 contentType(ContentType.Application.Json)
                                 setBody(
                                     RefreshTokenRequest(
-                                        refreshToken = tokenPair?.refreshToken ?: ""
+                                        refreshToken = currentAuthInfo?.refreshToken ?: ""
                                     )
                                 )
                             }.body()
 
                             val newAuthInfo = AuthInfo(
                                 accessToken = response.accessToken,
-                                refreshToken = response.refreshToken
+                                refreshToken = response.refreshToken,
+                                username = currentAuthInfo?.username
                             )
                             sessionStorage.set(newAuthInfo)
 

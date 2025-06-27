@@ -29,20 +29,8 @@ fun NavigationRoot(
         composable(NavigationRoute.Login.route) {
             LoginScreenRoot(navController = navController)
         }
-        composable(
-            route = "${NavigationRoute.Notes.route}?username={username}",
-            arguments = listOf(
-                navArgument("username") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                }
-            )
-        ) { backStackEntry ->
-            NotesScreenRoot(
-                navController = navController,
-                username = backStackEntry.arguments?.getString("username")
-            )
+        composable(NavigationRoute.Notes.route) {
+            NotesScreenRoot(navController = navController)
         }
 
         composable(

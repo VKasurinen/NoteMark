@@ -95,8 +95,7 @@ class LoginViewModel @SuppressLint("StaticFieldLeak") constructor(
                 }
 
                 is Result.Success -> {
-                    val username = result.data?.username ?: "Guest"
-                    eventChannel.send(LoginEvent.LoginSuccess(username))
+                    eventChannel.send(LoginEvent.LoginSuccess)
                 }
 
                 is Result.Loading -> Unit // Handled by state update

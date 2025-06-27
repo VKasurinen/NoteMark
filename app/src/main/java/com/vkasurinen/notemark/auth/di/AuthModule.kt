@@ -11,8 +11,10 @@ import com.vkasurinen.notemark.auth.presentation.landing.LandingViewModel
 import com.vkasurinen.notemark.auth.presentation.login.LoginViewModel
 import com.vkasurinen.notemark.auth.presentation.register.RegisterViewModel
 import com.vkasurinen.notemark.core.data.auth.EncryptedSessionStorage
+import com.vkasurinen.notemark.core.data.auth.UserSessionManagerImpl
 import com.vkasurinen.notemark.core.data.networking.HttpClientFactory
 import com.vkasurinen.notemark.core.domain.SessionStorage
+import com.vkasurinen.notemark.core.domain.UserSessionManager
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
@@ -27,6 +29,7 @@ val authModule = module {
     single<PatternValidator> { EmailPatternValidator }
     singleOf(::UserDataValidator)
     single<SessionStorage> { EncryptedSessionStorage(get()) }
+    single<UserSessionManager> { UserSessionManagerImpl(get()) }
 
 //    viewModelOf(::RegisterViewModel)
     viewModel { RegisterViewModel(get(), get()) }

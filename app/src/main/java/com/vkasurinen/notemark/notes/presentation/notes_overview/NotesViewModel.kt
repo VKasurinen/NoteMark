@@ -32,6 +32,9 @@ class NotesViewModel(
     private val eventChannel = Channel<NotesEvent>()
     val events = eventChannel.receiveAsFlow()
 
+    init {
+        loadNotes()
+    }
 
     fun onAction(action: NotesAction) {
         Timber.d("NotesViewModel onAction called with: $action")
@@ -47,7 +50,7 @@ class NotesViewModel(
         }
     }
 
-    fun loadNotes() {
+    private fun loadNotes() {
         viewModelScope.launch {
             try {
                 val result = notesRepository.getNotes(page = 1, size = 20)
