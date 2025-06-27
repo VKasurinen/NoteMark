@@ -89,11 +89,21 @@ fun DetailRoot(
     }
 
 
-    DetailScreen(
-        state = state,
-        onAction = viewModel::onAction,
-        navController = navController
-    )
+    if (state.id.isNotBlank()) {
+        DetailScreen(
+            state = state,
+            onAction = viewModel::onAction,
+            navController = navController
+        )
+    } else {
+        // Show a loading indicator or placeholder while data is being fetched
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Loading...")
+        }
+    }
 }
 
 @Composable

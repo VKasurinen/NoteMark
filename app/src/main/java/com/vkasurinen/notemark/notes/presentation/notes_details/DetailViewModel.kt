@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class DetailViewModel(
     private val notesRepository: NotesRepository,
@@ -69,17 +70,14 @@ class DetailViewModel(
             is DetailAction.OnContentChange -> {
                 _state.update { it.copy(content = action.content) }
             }
-
-            DetailAction.OnBackClick -> {
-                // Handle back navigation logic
-            }
         }
     }
 
     fun loadNoteDetails(noteId: String) {
         viewModelScope.launch {
             try {
-                val result = notesRepository.getNotes(1, 1)
+                Timber.d("Loading details for note ID: $noteId")
+                val result = notesRepository.getNotes(1, 20)
                 if (result is Result.Success) {
                     val note = result.data?.firstOrNull { it.id == noteId }
                     if (note != null) {
@@ -94,10 +92,14 @@ class DetailViewModel(
                                 lastEditedAt = note.lastEditedAt
                             )
                         }
+                    } else {
+                        Timber.e("Note with ID $noteId not found")
                     }
+                } else {
+                    Timber.e("Failed to fetch notes: ${result.message}")
                 }
             } catch (e: Exception) {
-                // Handle error
+                Timber.e(e, "Error loading note details")
             }
         }
     }
