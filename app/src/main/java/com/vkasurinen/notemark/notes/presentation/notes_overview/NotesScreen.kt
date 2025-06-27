@@ -1,13 +1,15 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
 )
 
 package com.vkasurinen.notemark.notes.presentation.notes_overview
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,6 +36,8 @@ import com.vkasurinen.notemark.notes.presentation.notes_overview.components.getU
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalConfiguration
@@ -158,12 +162,45 @@ fun NotesScreen(
                         title = note.title,
                         description = note.content,
                         modifier = Modifier
-                            .clickable {
-                                Timber.d("NoteCard clicked, ID: ${note.id}")
-                                onAction(NotesAction.NavigateToDetail(note.id))
-                            }
+                            .clickable { onAction(NotesAction.NavigateToDetail(note.id)) }
+                            .combinedClickable(
+                                onClick = { onAction(NotesAction.NavigateToDetail(note.id)) },
+                                onLongClick = { onAction(NotesAction.ShowDeleteDialog(note)) }
+                            )
                     )
                 }
+            }
+
+            if (state.showDeleteDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        state.noteToDelete?.let { onAction(NotesAction.DismissDeleteDialog(it)) }
+                    },
+                    title = { Text("Delete Note?") },
+                    text = { Text("Are you sure you want to delete this note? This action cannot be undone.") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                state.noteToDelete?.let {
+                                    onAction(NotesAction.DeleteNote(it.id))
+                                }
+                            }
+                        ) {
+                            Text("Delete", color = MaterialTheme.colorScheme.error)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                state.noteToDelete?.let {
+                                    onAction(NotesAction.DismissDeleteDialog(it))
+                                }
+                            }
+                        ) {
+                            Text("Cancel")
+                        }
+                    }
+                )
             }
         }
     }

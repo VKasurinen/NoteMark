@@ -52,8 +52,27 @@ class NotesViewModel(
                     eventChannel.send(NotesEvent.NavigateToDetail(action.noteId))
                 }
             }
+            is NotesAction.ShowDeleteDialog -> {
+                _state.update { it.copy(
+                    noteToDelete = action.note,
+                    showDeleteDialog = true
+                ) }
+            }
+            is NotesAction.DismissDeleteDialog -> {
+                _state.update { it.copy(showDeleteDialog = false) }
+            }
+            is NotesAction.DeleteNote -> {
+                viewModelScope.launch {
+                    notesRepository.deleteNote(action.noteId)
+                    loadNotes()
+                    _state.update { it.copy(showDeleteDialog = false) }
+                }
+            }
         }
     }
+
+
+
 
     private fun loadNotes() {
         viewModelScope.launch {
