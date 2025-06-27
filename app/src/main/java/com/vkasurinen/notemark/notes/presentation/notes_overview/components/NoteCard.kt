@@ -44,7 +44,7 @@ fun NoteCard(
         Text(
             text = formatDate(date),
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 14.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.W600
         )
 
@@ -54,7 +54,7 @@ fun NoteCard(
             text = title,
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleSmall.copy(
-                lineHeight = 18.sp,
+                lineHeight = 20.sp,
                 fontWeight = FontWeight.SemiBold
             ),
             maxLines = 2,
@@ -66,8 +66,10 @@ fun NoteCard(
         Text(
             text = description,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelSmall,
-            maxLines = 4,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontSize = 15.sp
+            ),
+            maxLines = 6,
             overflow = TextOverflow.Ellipsis
         )
 

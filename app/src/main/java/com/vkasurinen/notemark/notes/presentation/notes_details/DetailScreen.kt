@@ -1,5 +1,6 @@
 package com.vkasurinen.notemark.notes.presentation.notes_details
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,10 +49,12 @@ import com.vkasurinen.notemark.core.presentation.designsystem.theme.Inter
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -96,12 +100,11 @@ fun DetailRoot(
             navController = navController
         )
     } else {
-        // Show a loading indicator or placeholder while data is being fetched
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text("Loading...")
+            CircularProgressIndicator()
         }
     }
 }
@@ -112,6 +115,8 @@ fun DetailScreen(
     onAction: (DetailAction) -> Unit,
     navController: NavHostController
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     var showDiscardDialog by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
@@ -130,12 +135,12 @@ fun DetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(top = 50.dp)
+            .padding( top = if (isLandscape) 40.dp else 50.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -168,13 +173,14 @@ fun DetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 24.dp)
+                .padding(
+                    horizontal = if (isLandscape) 48.dp else 16.dp,
+                    vertical = 16.dp
+                )
         ) {
             BasicTextField(
                 value = titleValue,
-                onValueChange = {
-                    onAction(DetailAction.OnTitleChange(it.text))
-                },
+                onValueChange = { onAction(DetailAction.OnTitleChange(it.text)) },
                 textStyle = TextStyle(
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
@@ -202,7 +208,7 @@ fun DetailScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             HorizontalDivider(
                 modifier = Modifier
@@ -211,7 +217,7 @@ fun DetailScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             BasicTextField(
                 value = state.content,
@@ -222,7 +228,7 @@ fun DetailScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .fillMaxHeight(),
                 decorationBox = { contentTextField ->
                     Box {
                         if (state.content.isEmpty()) {
@@ -252,7 +258,6 @@ fun DetailScreen(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     NoteMarkButtonTertiary(
                         text = "Keep Editing",
                         onClick = { showDiscardDialog = false }
@@ -268,12 +273,16 @@ fun DetailScreen(
                 }
             }
         )
-
     }
 }
 
 
-
+@Preview(
+    showBackground = true,
+    widthDp = 800,
+    heightDp = 400,
+    name = "Landscape"
+)
 @Preview
 @Composable
 fun DetailScreenPreview() {
