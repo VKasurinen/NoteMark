@@ -2,6 +2,7 @@ package com.vkasurinen.notemark.notes.presentation.notes_overview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vkasurinen.notemark.core.domain.SessionStorage
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,6 +20,7 @@ import java.util.UUID
 
 class NotesViewModel(
     private val notesRepository: NotesRepository,
+    private val sessionStorage: SessionStorage
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(NotesState())
@@ -33,6 +35,12 @@ class NotesViewModel(
     val events = eventChannel.receiveAsFlow()
 
     init {
+        viewModelScope.launch {
+            sessionStorage.get()?.let { authInfo ->
+                _state.update { it.copy(username = authInfo.username) }
+            }
+        }
+
         loadNotes()
     }
 
@@ -70,9 +78,6 @@ class NotesViewModel(
             }
         }
     }
-
-
-
 
     private fun loadNotes() {
         viewModelScope.launch {

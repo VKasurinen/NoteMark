@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class
-)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 
 package com.vkasurinen.notemark.notes.presentation.notes_overview
 
@@ -45,7 +43,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.vkasurinen.notemark.R
 import com.vkasurinen.notemark.app.navigation.NavigationRoute
-import com.vkasurinen.notemark.core.domain.UserSessionManager
 import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import com.vkasurinen.notemark.notes.domain.Note
 import com.vkasurinen.notemark.notes.presentation.notes_overview.components.NoteCard
@@ -57,16 +54,9 @@ import timber.log.Timber
 fun NotesScreenRoot(
     navController: NavHostController,
     viewModel: NotesViewModel = koinViewModel(),
-    userSessionManager: UserSessionManager = getKoin().get()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        userSessionManager.getCurrentUsername()?.let { username ->
-            viewModel.onAction(NotesAction.UpdateUsername(username))
-        }
-    }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
