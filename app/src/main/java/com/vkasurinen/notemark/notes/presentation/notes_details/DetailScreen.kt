@@ -72,11 +72,7 @@ fun DetailRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
-    LaunchedEffect(noteId) {
-        viewModel.loadNoteDetails(noteId)
-    }
-
+    
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is DetailEvent.NavigateToNotes -> {

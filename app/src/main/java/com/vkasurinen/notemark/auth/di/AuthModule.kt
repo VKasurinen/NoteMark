@@ -27,7 +27,7 @@ val authModule = module {
     single<PatternValidator> { EmailPatternValidator }
     singleOf(::UserDataValidator)
     single<SessionStorage> { EncryptedSessionStorage(get()) }
-    
+
     viewModel { RegisterViewModel(get(), get()) }
     viewModel { LoginViewModel(get(), get()) }
     viewModelOf(::LandingViewModel)
