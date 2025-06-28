@@ -72,7 +72,7 @@ fun DetailRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    
+
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is DetailEvent.NavigateToNotes -> {
