@@ -88,6 +88,7 @@ fun NotesScreen(
     val initials = state.username?.let { getUserInitials(it) } ?: "NA"
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val maxCharacters = if (configuration.screenWidthDp < 600) 150 else 250
 
     NoteMarkScaffold(
         topAppBar = {
@@ -147,10 +148,16 @@ fun NotesScreen(
             ) {
                 items(state.notes.size) { index ->
                     val note = state.notes[index]
+                    val truncatedContent = if (note.content.length > maxCharacters) {
+                        note.content.take(maxCharacters) + "..."
+                    } else {
+                        note.content
+                    }
+
                     NoteCard(
                         date = note.createdAt,
                         title = note.title,
-                        description = note.content,
+                        description = truncatedContent,
                         modifier = Modifier
                             .clickable { onAction(NotesAction.NavigateToDetail(note.id)) }
                             .combinedClickable(
