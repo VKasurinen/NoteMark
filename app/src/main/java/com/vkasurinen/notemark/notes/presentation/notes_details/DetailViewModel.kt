@@ -73,7 +73,7 @@ class DetailViewModel(
         }
     }
 
-    fun loadNoteDetails(noteId: String) {
+    private fun loadNoteDetails(noteId: String) {
         viewModelScope.launch {
             try {
                 Timber.d("Loading details for note ID: $noteId")

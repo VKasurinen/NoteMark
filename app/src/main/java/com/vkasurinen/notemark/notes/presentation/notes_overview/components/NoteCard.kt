@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,15 @@ fun NoteCard(
     title: String,
     description: String
 ) {
+
+    val configuration = LocalConfiguration.current
+    val maxCharacters = if (configuration.screenWidthDp < 600) 150 else 250
+    val truncatedDescription = if (description.length > maxCharacters) {
+        description.take(maxCharacters) + "..."
+    } else {
+        description
+    }
+
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
@@ -64,12 +74,12 @@ fun NoteCard(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = description,
+            text = truncatedDescription,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelSmall.copy(
                 fontSize = 15.sp
             ),
-            maxLines = 6,
+            maxLines = Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis
         )
 
