@@ -25,3 +25,7 @@ val Icons.Filled.EyeOpen: ImageVector
 val Icons.Filled.Cross: ImageVector
     @Composable
     get() = ImageVector.vectorResource(R.drawable.cross)
+
+val Icons.Filled.Exit: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.exit)

@@ -11,8 +11,10 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,7 +36,12 @@ import com.vkasurinen.notemark.notes.presentation.notes_overview.components.getU
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
@@ -66,6 +73,14 @@ fun NotesScreenRoot(
                     launchSingleTop = true
                 }
             }
+
+            NotesEvent.NavigateToSettings -> {
+                navController.navigate(NavigationRoute.Settings.route) {
+                    popUpTo(NavigationRoute.Notes.route) {inclusive = false}
+                    launchSingleTop = true
+                }
+            }
+
             is NotesEvent.Error -> {
                 Toast.makeText(context, event.error.asString(context), Toast.LENGTH_SHORT).show()
             }
@@ -77,8 +92,6 @@ fun NotesScreenRoot(
         onAction = viewModel::onAction
     )
 }
-
-
 
 @Composable
 fun NotesScreen(
@@ -102,6 +115,19 @@ fun NotesScreen(
                     )
                 },
                 actions = {
+                    IconButton(
+                        onClick = {
+                            onAction(NotesAction.NavigateToSettings)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
+
+                    Spacer(Modifier.width(12.dp))
+
                     UserInitialsBox(
                         initials = initials,
                         modifier = Modifier.padding(end = 14.dp)

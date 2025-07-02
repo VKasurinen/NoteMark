@@ -1,0 +1,137 @@
+package com.vkasurinen.notemark.notes.presentation.settings
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.vkasurinen.notemark.core.presentation.designsystem.theme.Exit
+import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun SettingsScreenRoot(
+    navController: NavHostController,
+    viewModel: SettingsViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    SettingsScreen(
+        state = state,
+        onAction = viewModel::onAction
+    )
+}
+
+@Composable
+fun SettingsScreen(
+    state: SettingsState,
+    onAction: (SettingsAction) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(top = 50.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onAction(SettingsAction.NavigateBack) }
+                .padding(vertical = 12.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.CenterStart),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ChevronLeft,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = "SETTINGS",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onAction(SettingsAction.Logout) }
+                .padding(vertical = 12.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .align(Alignment.CenterStart),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Exit,
+                    contentDescription = "Log out",
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(20.dp) // Increased size
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = "Log out",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = MaterialTheme.colorScheme.error,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            }
+        }
+    }
+}
+
+
+
+@Preview
+@Composable
+private fun Preview() {
+    NoteMarkTheme {
+        SettingsScreen(
+            state = SettingsState(),
+            onAction = {}
+        )
+    }
+}

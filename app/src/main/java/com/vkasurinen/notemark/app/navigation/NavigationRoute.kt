@@ -30,4 +30,9 @@ interface NavigationRoute {
     data object Detail : NavigationRoute {
         override val route: String = "details"
     }
+
+    @Serializable
+    data object Settings : NavigationRoute {
+        override val route: String = "settings"
+    }
 }

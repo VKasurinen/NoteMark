@@ -76,6 +76,11 @@ class NotesViewModel(
                     _state.update { it.copy(showDeleteDialog = false) }
                 }
             }
+            NotesAction.NavigateToSettings -> {
+                viewModelScope.launch {
+                    eventChannel.send(NotesEvent.NavigateToSettings)
+                }
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import com.vkasurinen.notemark.auth.presentation.login.LoginScreenRoot
 import com.vkasurinen.notemark.auth.presentation.register.RegisterScreenRoot
 import com.vkasurinen.notemark.notes.presentation.notes_details.DetailRoot
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesScreenRoot
+import com.vkasurinen.notemark.notes.presentation.settings.SettingsScreenRoot
 
 @Composable
 fun NavigationRoot(
@@ -39,6 +40,10 @@ fun NavigationRoot(
         ) { backStackEntry ->
             val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
             DetailRoot(navController = navController, noteId = noteId)
+        }
+
+        composable(NavigationRoute.Settings.route) {
+            SettingsScreenRoot(navController = navController)
         }
 
 

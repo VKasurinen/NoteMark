@@ -39,7 +39,6 @@ class NotesRepositoryImpl(
         }
     }
 
-
     override suspend fun updateNote(request: Note): Result<Note> {
         return try {
             noteDao.upsertNote(request.toEntity())
@@ -59,8 +58,6 @@ class NotesRepositoryImpl(
             Result.Error(e.message ?: "Failed to update note locally")
         }
     }
-
-
 
     override suspend fun getNotes(page: Int, size: Int): Result<List<Note>> {
         return try {
@@ -95,7 +92,6 @@ class NotesRepositoryImpl(
         }
     }
 
-
     override suspend fun deleteNote(id: String): Result<Unit> {
         return try {
             noteDao.deleteNote(id)
@@ -105,6 +101,7 @@ class NotesRepositoryImpl(
                     notesApi.deleteNote(id)
                 } catch (e: Exception) {
                     Timber.e(e, "Remote delete failed")
+                    // Store failed delete for sync job
                 }
             }
 
