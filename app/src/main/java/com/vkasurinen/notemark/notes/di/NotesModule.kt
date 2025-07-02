@@ -1,11 +1,10 @@
 package com.vkasurinen.notemark.notes.di
 
 
-import com.vkasurinen.notemark.auth.data.api.AuthApi
 import com.vkasurinen.notemark.notes.data.api.NotesApi
 import com.vkasurinen.notemark.notes.data.repository.NotesRepositoryImpl
 import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
-import com.vkasurinen.notemark.notes.presentation.notes_details.DetailViewModel
+import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.DetailViewModel
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesViewModel
 import com.vkasurinen.notemark.notes.presentation.settings.SettingsViewModel
 import org.koin.core.module.dsl.singleOf

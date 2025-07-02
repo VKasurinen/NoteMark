@@ -146,7 +146,18 @@ fun SettingsScreen(
 }
 
 
-
+@Preview(
+    showBackground = true,
+    widthDp = 800,
+    heightDp = 1280,
+    name = "Tablet Portrait"
+)
+@Preview(
+    showBackground = true,
+    widthDp = 800,
+    heightDp = 400,
+    name = "Landscape"
+)
 @Preview
 @Composable
 private fun Preview() {

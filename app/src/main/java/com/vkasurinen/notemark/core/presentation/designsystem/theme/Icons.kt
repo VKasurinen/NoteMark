@@ -29,3 +29,11 @@ val Icons.Filled.Cross: ImageVector
 val Icons.Filled.Exit: ImageVector
     @Composable
     get() = ImageVector.vectorResource(R.drawable.exit)
+
+val Icons.Filled.Read: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.read)
+
+val Icons.Filled.Edit: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.edit)

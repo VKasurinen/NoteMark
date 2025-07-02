@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation.notes_details
+package com.vkasurinen.notemark.notes.presentation.notes_details.edit_details
 
 data class DetailState(
     val id: String = "",

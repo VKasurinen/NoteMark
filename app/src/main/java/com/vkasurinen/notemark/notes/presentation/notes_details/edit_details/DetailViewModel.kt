@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation.notes_details
+package com.vkasurinen.notemark.notes.presentation.notes_details.edit_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

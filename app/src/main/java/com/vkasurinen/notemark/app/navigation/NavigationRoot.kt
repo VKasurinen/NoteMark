@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import com.vkasurinen.notemark.auth.presentation.landing.LandingScreenRoot
 import com.vkasurinen.notemark.auth.presentation.login.LoginScreenRoot
 import com.vkasurinen.notemark.auth.presentation.register.RegisterScreenRoot
-import com.vkasurinen.notemark.notes.presentation.notes_details.DetailRoot
+import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.DetailRoot
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesScreenRoot
 import com.vkasurinen.notemark.notes.presentation.settings.SettingsScreenRoot
 
