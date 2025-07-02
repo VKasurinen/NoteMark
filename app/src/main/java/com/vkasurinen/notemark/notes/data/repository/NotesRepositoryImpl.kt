@@ -112,4 +112,20 @@ class NotesRepositoryImpl(
         }
     }
 
+    override suspend fun logout(refreshToken: String) {
+        try {
+            notesApi.logout(refreshToken)
+        } catch (e: Exception) {
+            Timber.e(e, "Logout API call failed")
+        }
+    }
+
+    override suspend fun clearLocalDatabase() {
+        try {
+            noteDao.deleteAllNotes()
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to clear local database")
+        }
+    }
+
 }

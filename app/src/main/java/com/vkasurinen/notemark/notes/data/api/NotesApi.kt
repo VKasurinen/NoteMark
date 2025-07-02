@@ -93,4 +93,16 @@ class NotesApi(
             throw e
         }
     }
+
+    suspend fun logout(refreshToken: String) {
+        try {
+            httpClient.post("https://notemark.pl-coding.com/api/auth/logout") {
+                contentType(ContentType.Application.Json)
+                setBody(mapOf("refreshToken" to refreshToken))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Logout API call failed")
+            throw e
+        }
+    }
 }

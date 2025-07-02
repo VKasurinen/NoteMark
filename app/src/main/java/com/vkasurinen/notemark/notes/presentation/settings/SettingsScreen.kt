@@ -1,5 +1,6 @@
 package com.vkasurinen.notemark.notes.presentation.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,22 +16,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.vkasurinen.notemark.app.navigation.NavigationRoute
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.Exit
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -39,12 +40,33 @@ fun SettingsScreenRoot(
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            SettingsEvent.NavigateToLogin -> {
+                navController.navigate(NavigationRoute.Login.route) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+
+            SettingsEvent.NavigateBack -> {
+                navController.popBackStack()
+            }
+
+            is SettingsEvent.Error -> {
+                Toast.makeText(context, event.error.asString(context), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     SettingsScreen(
         state = state,
         onAction = viewModel::onAction
     )
 }
+
 
 @Composable
 fun SettingsScreen(
@@ -106,7 +128,7 @@ fun SettingsScreen(
                     imageVector = Icons.Default.Exit,
                     contentDescription = "Log out",
                     tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(20.dp) // Increased size
+                    modifier = Modifier.size(20.dp)
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))

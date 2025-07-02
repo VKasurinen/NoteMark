@@ -49,6 +49,14 @@ class EncryptedSessionStorage(
         }
     }
 
+    override suspend fun clear() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(KEY_AUTH_INFO)
+            Timber.tag("EncryptedSessionStorage").d("Session cleared.")
+        }
+    }
+
+
     companion object {
         private val KEY_AUTH_INFO = stringPreferencesKey("KEY_AUTH_INFO")
         private const val ENCRYPTED_PREFIX = "ENC:"
