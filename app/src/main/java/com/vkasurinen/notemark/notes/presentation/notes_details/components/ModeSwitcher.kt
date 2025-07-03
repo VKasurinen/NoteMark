@@ -91,13 +91,6 @@ fun ModeSwitcherButton(
 }
 
 
-enum class Mode {
-    VIEW,
-    EDIT,
-    READ
-}
-
-
 
 @Preview(showBackground = true)
 @Composable

@@ -48,6 +48,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
@@ -56,6 +57,8 @@ import androidx.navigation.NavHostController
 import com.vkasurinen.notemark.app.navigation.NavigationRoute
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.SpaceGrotesk
 import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
+import com.vkasurinen.notemark.notes.presentation.notes_details.components.Mode
+import com.vkasurinen.notemark.notes.presentation.notes_details.components.ModeSwitcher
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -80,6 +83,10 @@ fun EditDetailScreenRoot(
 
             is EditDetailEvent.ShowValidationError -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+
+            EditDetailEvent.NavigateToReaderDetail -> {
+                // Implement reader navigation
             }
         }
     }
@@ -138,7 +145,8 @@ fun EditDetailScreen(
         ) {
             IconButton(
                 onClick = {
-                    val hasChanges = state.title != state.originalTitle || state.content != state.originalContent
+                    val hasChanges =
+                        state.title != state.originalTitle || state.content != state.originalContent
                     if (hasChanges) {
                         showDiscardDialog = true
                     } else {
@@ -163,7 +171,7 @@ fun EditDetailScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
                 .padding(
                     horizontal = if (isLandscape) 48.dp else 16.dp,
@@ -237,6 +245,25 @@ fun EditDetailScreen(
                 }
             )
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 50.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            ModeSwitcher(
+                currentMode = Mode.EDIT,
+                onModeSelected = { mode ->
+                    when (mode) {
+                        Mode.VIEW -> navController.popBackStack()
+                        Mode.READ -> onAction(EditDetailAction.NavigateToReader)
+                        else -> {}
+                    }
+                }
+            )
+        }
+
     }
 
     if (showDiscardDialog) {

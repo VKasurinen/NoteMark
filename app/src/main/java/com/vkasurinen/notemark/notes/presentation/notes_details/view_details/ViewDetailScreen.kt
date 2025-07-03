@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.HorizontalDivider
@@ -99,7 +101,6 @@ fun ViewDetailScreen(
                 .fillMaxSize()
                 .padding(top = 50.dp, bottom = 30.dp)
         ) {
-            // Your existing header and content
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -133,9 +134,9 @@ fun ViewDetailScreen(
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
                     .weight(1f)
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Text(
                     text = state.title,
@@ -197,7 +198,6 @@ fun ViewDetailScreen(
                     }
                 }
 
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 HorizontalDivider(
@@ -209,33 +209,32 @@ fun ViewDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Box {
-                    Text(
-                        text = state.content,
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                Text(
+                    text = state.content,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 32.dp),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                ModeSwitcher(
-                    currentMode = Mode.VIEW,
-                    onModeSelected = { mode ->
-                        when (mode) {
-                            Mode.EDIT -> onAction(ViewDetailAction.NavigateToEdit)
-                            Mode.READ -> onAction(ViewDetailAction.NavigateToReader)
-                            else -> {}
-                        }
-                    }
                 )
             }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 50.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            ModeSwitcher(
+                currentMode = Mode.VIEW,
+                onModeSelected = { mode ->
+                    when (mode) {
+                        Mode.EDIT -> onAction(ViewDetailAction.NavigateToEdit)
+                        Mode.READ -> onAction(ViewDetailAction.NavigateToReader)
+                        else -> {}
+                    }
+                }
+            )
         }
     }
 }

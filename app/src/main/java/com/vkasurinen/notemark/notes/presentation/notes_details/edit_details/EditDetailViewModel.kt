@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.domain.Note
 import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
+import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailAction
+import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailEvent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -69,6 +71,12 @@ class EditDetailViewModel(
             }
             is EditDetailAction.OnContentChange -> {
                 _state.update { it.copy(content = action.content) }
+            }
+
+            EditDetailAction.NavigateToReader -> {
+                viewModelScope.launch {
+                    eventChannel.send(EditDetailEvent.NavigateToReaderDetail)
+                }
             }
         }
     }
