@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation.settings
+package com.vkasurinen.notemark.settings
 
 import com.vkasurinen.notemark.core.presentation.util.UiText
 

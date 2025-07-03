@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation.settings
+package com.vkasurinen.notemark.settings
 
 import android.widget.Toast
 import androidx.compose.foundation.background

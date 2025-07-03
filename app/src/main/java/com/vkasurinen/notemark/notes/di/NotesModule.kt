@@ -6,7 +6,7 @@ import com.vkasurinen.notemark.notes.data.repository.NotesRepositoryImpl
 import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
 import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.DetailViewModel
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesViewModel
-import com.vkasurinen.notemark.notes.presentation.settings.SettingsViewModel
+import com.vkasurinen.notemark.settings.SettingsViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf

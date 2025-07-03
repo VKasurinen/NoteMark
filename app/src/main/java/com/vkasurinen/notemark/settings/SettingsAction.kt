@@ -1,4 +1,4 @@
-package com.vkasurinen.notemark.notes.presentation.settings
+package com.vkasurinen.notemark.settings
 
 sealed interface SettingsAction {
     data object NavigateBack : SettingsAction
