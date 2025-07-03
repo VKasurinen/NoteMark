@@ -59,24 +59,26 @@ import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun DetailRoot(
+fun EditDetailScreenRoot(
     navController: NavHostController,
     noteId: String,
-    viewModel: DetailViewModel = koinViewModel() { parametersOf(noteId)}
+    viewModel: EditDetailViewModel = koinViewModel() { parametersOf(noteId)}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    //TODO: Add mode switcher to this screen also
+
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            is DetailEvent.NavigateToNotes -> {
-                navController.navigate(NavigationRoute.Notes.route) {
-                    popUpTo(NavigationRoute.Notes.route) { inclusive = true }
+            is EditDetailEvent.NavigateToViewDetail -> {
+                navController.navigate("${NavigationRoute.ViewDetail.route}/$noteId") {
+                    popUpTo(NavigationRoute.Notes.route) { inclusive = false }
                     launchSingleTop = true
                 }
             }
 
-            is DetailEvent.ShowValidationError -> {
+            is EditDetailEvent.ShowValidationError -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
@@ -84,7 +86,7 @@ fun DetailRoot(
 
 
     if (state.id.isNotBlank()) {
-        DetailScreen(
+        EditDetailScreen(
             state = state,
             onAction = viewModel::onAction,
             navController = navController
@@ -100,9 +102,9 @@ fun DetailRoot(
 }
 
 @Composable
-fun DetailScreen(
-    state: DetailState,
-    onAction: (DetailAction) -> Unit,
+fun EditDetailScreen(
+    state: EditDetailState,
+    onAction: (EditDetailAction) -> Unit,
     navController: NavHostController
 ) {
     val configuration = LocalConfiguration.current
@@ -155,7 +157,7 @@ fun DetailScreen(
 
             NoteMarkButtonTertiary(
                 text = "SAVE NOTE",
-                onClick = { onAction(DetailAction.OnSaveClick) }
+                onClick = { onAction(EditDetailAction.OnSaveClick) }
             )
         }
 
@@ -170,7 +172,7 @@ fun DetailScreen(
         ) {
             BasicTextField(
                 value = titleValue,
-                onValueChange = { onAction(DetailAction.OnTitleChange(it.text)) },
+                onValueChange = { onAction(EditDetailAction.OnTitleChange(it.text)) },
                 textStyle = TextStyle(
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
@@ -211,7 +213,7 @@ fun DetailScreen(
 
             BasicTextField(
                 value = state.content,
-                onValueChange = { onAction(DetailAction.OnContentChange(it)) },
+                onValueChange = { onAction(EditDetailAction.OnContentChange(it)) },
                 textStyle = TextStyle(
                     fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.onSurface
@@ -277,8 +279,8 @@ fun DetailScreen(
 @Composable
 fun DetailScreenPreview() {
     NoteMarkTheme {
-        DetailScreen(
-            state = DetailState(
+        EditDetailScreen(
+            state = EditDetailState(
                 title = "Note Title",
                 content = "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.",
                 originalTitle = "Original Note Title",

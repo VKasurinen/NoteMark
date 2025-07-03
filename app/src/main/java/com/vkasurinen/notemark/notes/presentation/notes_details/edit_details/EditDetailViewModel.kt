@@ -14,20 +14,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class DetailViewModel(
+class EditDetailViewModel(
     private val notesRepository: NotesRepository,
     private val noteId: String
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(DetailState())
+    private val _state = MutableStateFlow(EditDetailState())
     val state = _state
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = DetailState()
+            initialValue = EditDetailState()
         )
 
-    private val eventChannel = Channel<DetailEvent>()
+    private val eventChannel = Channel<EditDetailEvent>()
     val events get() = eventChannel.receiveAsFlow()
 
     init {
@@ -36,14 +36,14 @@ class DetailViewModel(
         }
     }
 
-    fun onAction(action: DetailAction) {
+    fun onAction(action: EditDetailAction) {
         when (action) {
-            DetailAction.OnSaveClick -> {
+            EditDetailAction.OnSaveClick -> {
                 viewModelScope.launch {
                     val currentState = _state.value
 
                     if (currentState.title.isBlank() || currentState.content.isBlank()) {
-                        eventChannel.send(DetailEvent.ShowValidationError("Content cannot be empty"))
+                        eventChannel.send(EditDetailEvent.ShowValidationError("Content cannot be empty"))
                         return@launch
                     }
 
@@ -57,17 +57,17 @@ class DetailViewModel(
 
                     val result = notesRepository.updateNote(updatedNote)
                     if (result is Result.Success) {
-                        eventChannel.send(DetailEvent.NavigateToNotes)
+                        eventChannel.send(EditDetailEvent.NavigateToViewDetail)
                     } else {
-                        eventChannel.send(DetailEvent.ShowValidationError("Failed to update note"))
+                        eventChannel.send(EditDetailEvent.ShowValidationError("Failed to update note"))
                     }
                 }
             }
 
-            is DetailAction.OnTitleChange -> {
+            is EditDetailAction.OnTitleChange -> {
                 _state.update { it.copy(title = action.title) }
             }
-            is DetailAction.OnContentChange -> {
+            is EditDetailAction.OnContentChange -> {
                 _state.update { it.copy(content = action.content) }
             }
         }

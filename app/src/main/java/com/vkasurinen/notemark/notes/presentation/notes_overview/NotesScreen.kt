@@ -67,8 +67,8 @@ fun NotesScreenRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            is NotesEvent.NavigateToDetail -> {
-                navController.navigate("${NavigationRoute.Detail.route}/${event.noteId}") {
+            is NotesEvent.NavigateToEditDetail -> {
+                navController.navigate("${NavigationRoute.EditDetail.route}/${event.noteId}") {
                     popUpTo(NavigationRoute.Notes.route) { inclusive = false }
                     launchSingleTop = true
                 }
@@ -185,9 +185,9 @@ fun NotesScreen(
                         title = note.title,
                         description = truncatedContent,
                         modifier = Modifier
-                            .clickable { onAction(NotesAction.NavigateToDetail(note.id)) }
+                            .clickable { onAction(NotesAction.NavigateToEditDetail(note.id)) }
                             .combinedClickable(
-                                onClick = { onAction(NotesAction.NavigateToDetail(note.id)) },
+                                onClick = { onAction(NotesAction.NavigateToEditDetail(note.id)) },
                                 onLongClick = { onAction(NotesAction.ShowDeleteDialog(note)) }
                             )
                     )

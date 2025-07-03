@@ -9,7 +9,8 @@ import androidx.navigation.navArgument
 import com.vkasurinen.notemark.auth.presentation.landing.LandingScreenRoot
 import com.vkasurinen.notemark.auth.presentation.login.LoginScreenRoot
 import com.vkasurinen.notemark.auth.presentation.register.RegisterScreenRoot
-import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.DetailRoot
+import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.EditDetailScreenRoot
+import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailScreenRoot
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesScreenRoot
 import com.vkasurinen.notemark.settings.SettingsScreenRoot
 
@@ -35,11 +36,19 @@ fun NavigationRoot(
         }
 
         composable(
-            route = "${NavigationRoute.Detail.route}/{noteId}",
+            route = "${NavigationRoute.ViewDetail.route}/{noteId}",
             arguments = listOf(navArgument("noteId") { type = NavType.StringType })
         ) { backStackEntry ->
             val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
-            DetailRoot(navController = navController, noteId = noteId)
+            ViewDetailScreenRoot(navController = navController, noteId = noteId)
+        }
+
+        composable(
+            route = "${NavigationRoute.EditDetail.route}/{noteId}",
+            arguments = listOf(navArgument("noteId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
+            EditDetailScreenRoot(navController = navController, noteId = noteId)
         }
 
         composable(NavigationRoute.Settings.route) {

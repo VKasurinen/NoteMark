@@ -5,7 +5,7 @@ import com.vkasurinen.notemark.notes.domain.Note
 sealed interface NotesAction {
     data class UpdateUsername(val username: String) : NotesAction
     data object CreateNewNote : NotesAction
-    data class NavigateToDetail(val noteId: String) : NotesAction
+    data class NavigateToEditDetail(val noteId: String) : NotesAction
     data object NavigateToSettings : NotesAction
     data class DeleteNote(val noteId: String) : NotesAction
     data class ShowDeleteDialog(val note: Note) : NotesAction

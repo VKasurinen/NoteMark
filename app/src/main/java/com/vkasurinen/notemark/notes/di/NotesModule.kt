@@ -4,7 +4,8 @@ package com.vkasurinen.notemark.notes.di
 import com.vkasurinen.notemark.notes.data.api.NotesApi
 import com.vkasurinen.notemark.notes.data.repository.NotesRepositoryImpl
 import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
-import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.DetailViewModel
+import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.EditDetailViewModel
+import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailViewModel
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesViewModel
 import com.vkasurinen.notemark.settings.SettingsViewModel
 import org.koin.core.module.dsl.singleOf
@@ -17,8 +18,16 @@ val notesModule = module {
     viewModelOf(::NotesViewModel)
     viewModelOf(::SettingsViewModel)
 
+
     viewModel { (noteId: String) ->
-        DetailViewModel(
+        ViewDetailViewModel(
+            notesRepository = get(),
+            noteId = noteId
+        )
+    }
+
+    viewModel { (noteId: String) ->
+        EditDetailViewModel(
             notesRepository = get(),
             noteId = noteId
         )

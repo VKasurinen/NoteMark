@@ -27,8 +27,18 @@ interface NavigationRoute {
     }
 
     @Serializable
-    data object Detail : NavigationRoute {
-        override val route: String = "details"
+    data object ViewDetail : NavigationRoute {
+        override val route: String = "viewDetails"
+    }
+
+    @Serializable
+    data object EditDetail : NavigationRoute {
+        override val route: String = "editDetails"
+    }
+
+    @Serializable
+    data object ReaderDetail : NavigationRoute {
+        override val route: String = "readerDetails"
     }
 
     @Serializable

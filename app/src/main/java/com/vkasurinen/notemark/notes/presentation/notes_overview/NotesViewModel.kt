@@ -54,10 +54,10 @@ class NotesViewModel(
                 Timber.d("Creating new note")
                 createNewNote()
             }
-            is NotesAction.NavigateToDetail -> {
+            is NotesAction.NavigateToEditDetail -> {
                 Timber.d("Processing NavigateToDetail for note: ${action.noteId}")
                 viewModelScope.launch {
-                    eventChannel.send(NotesEvent.NavigateToDetail(action.noteId))
+                    eventChannel.send(NotesEvent.NavigateToEditDetail(action.noteId))
                 }
             }
             is NotesAction.ShowDeleteDialog -> {
@@ -116,7 +116,7 @@ class NotesViewModel(
                         currentState.copy(notes = currentState.notes + response.data)
                     }
                     loadNotes()
-                    eventChannel.send(NotesEvent.NavigateToDetail(response.data.id))
+                    eventChannel.send(NotesEvent.NavigateToEditDetail(response.data.id))
                 } else {
                     eventChannel.send(NotesEvent.Error(UiText.Dynamic("Failed to create note")))
                 }
