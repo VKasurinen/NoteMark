@@ -70,8 +70,6 @@ fun EditDetailScreenRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    //TODO: Add mode switcher to this screen also
-
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is EditDetailEvent.NavigateToViewDetail -> {
@@ -81,12 +79,15 @@ fun EditDetailScreenRoot(
                 }
             }
 
-            is EditDetailEvent.ShowValidationError -> {
-                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            EditDetailEvent.NavigateToReaderDetail -> {
+                navController.navigate("${NavigationRoute.ReaderDetail.route}/$noteId") {
+                    popUpTo(NavigationRoute.Notes.route) { inclusive = false }
+                    launchSingleTop = true
+                }
             }
 
-            EditDetailEvent.NavigateToReaderDetail -> {
-                // Implement reader navigation
+            is EditDetailEvent.ShowValidationError -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
     }

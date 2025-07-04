@@ -12,6 +12,7 @@ import com.vkasurinen.notemark.auth.presentation.landing.LandingScreenRoot
 import com.vkasurinen.notemark.auth.presentation.login.LoginScreenRoot
 import com.vkasurinen.notemark.auth.presentation.register.RegisterScreenRoot
 import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.EditDetailScreenRoot
+import com.vkasurinen.notemark.notes.presentation.notes_details.reader_details.ReaderScreenRoot
 import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailScreenRoot
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesScreenRoot
 import com.vkasurinen.notemark.settings.SettingsScreenRoot
@@ -56,6 +57,13 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         ) { backStackEntry ->
             val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
             EditDetailScreenRoot(navController, noteId)
+        }
+
+        composable(
+            "${NavigationRoute.ReaderDetail.route}/{noteId}"
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
+            ReaderScreenRoot(navController, noteId)
         }
     }
 }

@@ -74,7 +74,7 @@ fun ViewDetailScreenRoot(
                 navController.navigate("${NavigationRoute.EditDetail.route}/$noteId")
             }
             ViewDetailEvent.NavigateToReaderDetail -> {
-                // Implement reader navigation
+                navController.navigate("${NavigationRoute.ReaderDetail.route}/$noteId")
             }
             is ViewDetailEvent.Error -> {
                 Toast.makeText(context, event.error.asString(context), Toast.LENGTH_SHORT).show()
