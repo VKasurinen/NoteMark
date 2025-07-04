@@ -4,19 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.rememberNavController
-import com.vkasurinen.notemark.app.navigation.NavigationRoot
+import com.vkasurinen.notemark.app.main.MainScreen
 import com.vkasurinen.notemark.auth.domain.repository.AuthRepository
 import com.vkasurinen.notemark.core.domain.util.Result
-import com.vkasurinen.notemark.core.presentation.designsystem.buttons.NoteMarkButtonSecondary
-import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -25,17 +17,14 @@ class MainActivity : ComponentActivity() {
 
     private val authRepository: AuthRepository by inject()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
         setContent {
-            NoteMarkTheme {
-                NavigationRoot(
-                    navController = rememberNavController()
-                )
-            }
+            MainScreen()
         }
     }
 

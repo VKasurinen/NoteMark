@@ -35,13 +35,13 @@ class NotesViewModel(
     val events = eventChannel.receiveAsFlow()
 
     init {
+        loadNotes()
+
         viewModelScope.launch {
             sessionStorage.get()?.let { authInfo ->
                 _state.update { it.copy(username = authInfo.username) }
             }
         }
-
-        loadNotes()
     }
 
     fun onAction(action: NotesAction) {
