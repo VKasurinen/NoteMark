@@ -6,4 +6,5 @@ data class ReaderState(
     val content: String = "",
     val createdAt: String = "",
     val lastEditedAt: String = "",
+    val uiVisible: Boolean = true,
 )
