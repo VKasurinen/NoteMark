@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.Icon
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -82,64 +84,74 @@ fun SettingsScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onAction(SettingsAction.NavigateBack) }
-                .padding(vertical = 12.dp)
+                .padding(horizontal = 18.dp, vertical = 4.dp)
         ) {
-            Row(
+            Box(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.CenterStart),
-                verticalAlignment = Alignment.CenterVertically
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onAction(SettingsAction.NavigateBack) }
+                    .padding(vertical = 8.dp)
+                    .align(Alignment.CenterStart)
             ) {
-                Icon(
-                    imageVector = Icons.Default.ChevronLeft,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
-                )
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Text(
-                    text = "SETTINGS",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Bold
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ChevronLeft,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(24.dp)
                     )
-                )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        text = "SETTINGS",
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onAction(SettingsAction.Logout) }
-                .padding(vertical = 12.dp)
+                .padding(horizontal = 14.dp, vertical = 4.dp)
         ) {
-            Row(
+            Box(
                 modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .align(Alignment.CenterStart),
-                verticalAlignment = Alignment.CenterVertically
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onAction(SettingsAction.Logout) }
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .align(Alignment.CenterStart)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Exit,
-                    contentDescription = "Log out",
-                    tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(20.dp)
-                )
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Text(
-                    text = "Log out",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        color = MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Medium
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Exit,
+                        contentDescription = "Log out",
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(20.dp)
                     )
-                )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        text = "Log out",
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Medium
+                        )
+                    )
+                }
             }
         }
     }
