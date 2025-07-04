@@ -35,7 +35,7 @@ class NotesViewModel(
     val events = eventChannel.receiveAsFlow()
 
     init {
-        loadNotes()
+        observeNotes()
 
         viewModelScope.launch {
             sessionStorage.get()?.let { authInfo ->
@@ -92,6 +92,15 @@ class NotesViewModel(
         }
     }
 
+    private fun observeNotes() {
+        viewModelScope.launch {
+            notesRepository.observeNotes().collect { notes ->
+                _state.update { it.copy(notes = notes) }
+            }
+        }
+    }
+
+
     private fun loadNotes() {
         viewModelScope.launch {
             try {
@@ -123,7 +132,6 @@ class NotesViewModel(
                     _state.update { currentState ->
                         currentState.copy(notes = currentState.notes + response.data)
                     }
-                    loadNotes()
                     eventChannel.send(NotesEvent.NavigateToEditDetail(response.data.id))
                 } else {
                     eventChannel.send(NotesEvent.Error(UiText.Dynamic("Failed to create note")))

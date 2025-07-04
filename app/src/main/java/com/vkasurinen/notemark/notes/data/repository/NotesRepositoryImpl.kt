@@ -9,6 +9,8 @@ import com.vkasurinen.notemark.notes.domain.Note
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -60,37 +62,49 @@ class NotesRepositoryImpl(
     }
 
     override suspend fun getNotes(page: Int, size: Int): Result<List<Note>> {
-        return try {
-            // Try remote first
-            val response = notesApi.getNotes(page, size)
-            val remoteNotes = response.notes.map { it.toDomain() }
+        try {
+            // Step 1: Fetch from local first and return immediately
+            val localEntities = noteDao.getNotesOnce()
+            val localNotes = localEntities.map { entity ->
+                Note(
+                    id = entity.id,
+                    title = entity.title,
+                    content = entity.content,
+                    createdAt = entity.createdAt,
+                    lastEditedAt = entity.lastEditedAt
+                )
+            }
 
-            // Save to local DB
-            noteDao.upsertNotes(remoteNotes.map { it.toEntity() })
-
-            Result.Success(remoteNotes)
-        } catch (e: Exception) {
-            Timber.e(e, "Remote fetch failed, falling back to local")
-
-            try {
-                // Fallback to local
-                val localEntities = noteDao.getNotesOnce()
-                val localNotes = localEntities.map { entity ->
-                    Note(
-                        id = entity.id,
-                        title = entity.title,
-                        content = entity.content,
-                        createdAt = entity.createdAt,
-                        lastEditedAt = entity.lastEditedAt
-                    )
+            // Launch remote fetch in parallel, but don’t block
+            applicationScope.launch {
+                try {
+                    val response = notesApi.getNotes(page, size)
+                    val remoteNotes = response.notes.map { it.toDomain() }
+                    noteDao.upsertNotes(remoteNotes.map { it.toEntity() })
+                    Timber.d("Remote notes fetched and saved to DB")
+                } catch (e: Exception) {
+                    Timber.e(e, "Remote fetch failed, using local fallback")
                 }
-                Result.Success(localNotes)
-            } catch (dbException: Exception) {
-                Timber.e(dbException, "Local fetch failed")
-                Result.Error("Failed to load notes from both remote and local sources")
+            }
+
+            return Result.Success(localNotes)
+        } catch (localException: Exception) {
+            Timber.e(localException, "Local fetch failed, trying remote")
+
+            // Step 2: Local failed, fallback to remote
+            return try {
+                val response = notesApi.getNotes(page, size)
+                val remoteNotes = response.notes.map { it.toDomain() }
+
+                noteDao.upsertNotes(remoteNotes.map { it.toEntity() })
+                Result.Success(remoteNotes)
+            } catch (remoteException: Exception) {
+                Timber.e(remoteException, "Remote fallback failed")
+                Result.Error("Failed to load notes from both local and remote")
             }
         }
     }
+
 
     override suspend fun deleteNote(id: String): Result<Unit> {
         return try {
@@ -127,5 +141,21 @@ class NotesRepositoryImpl(
             Timber.e(e, "Failed to clear local database")
         }
     }
+
+    override fun observeNotes(): Flow<List<Note>> {
+        return noteDao.observeNotes().map { entities ->
+            entities.map { entity ->
+                Note(
+                    id = entity.id,
+                    title = entity.title,
+                    content = entity.content,
+                    createdAt = entity.createdAt,
+                    lastEditedAt = entity.lastEditedAt
+                )
+            }
+        }
+    }
+
+
 
 }

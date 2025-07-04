@@ -25,4 +25,7 @@ interface NoteDao {
 
     @Query("DELETE FROM note")
     suspend fun deleteAllNotes()
+
+    @Query("SELECT * FROM note ORDER BY lastEditedAt DESC")
+    fun observeNotes(): Flow<List<NoteEntity>>
 }
