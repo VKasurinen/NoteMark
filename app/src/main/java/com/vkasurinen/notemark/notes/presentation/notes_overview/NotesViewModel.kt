@@ -55,11 +55,19 @@ class NotesViewModel(
                 createNewNote()
             }
             is NotesAction.NavigateToEditDetail -> {
-                Timber.d("Processing NavigateToDetail for note: ${action.noteId}")
+                Timber.d("Processing NavigateToEditDetail for note: ${action.noteId}")
                 viewModelScope.launch {
                     eventChannel.send(NotesEvent.NavigateToEditDetail(action.noteId))
                 }
             }
+
+            is NotesAction.NavigateToViewDetail -> {
+                Timber.d("Processing NavigateToViewDetail for note: ${action.noteId}")
+                viewModelScope.launch {
+                    eventChannel.send(NotesEvent.NavigateToViewDetail(action.noteId))
+                }
+            }
+
             is NotesAction.ShowDeleteDialog -> {
                 _state.update { it.copy(
                     noteToDelete = action.note,

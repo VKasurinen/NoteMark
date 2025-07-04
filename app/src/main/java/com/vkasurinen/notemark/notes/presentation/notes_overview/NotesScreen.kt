@@ -74,6 +74,13 @@ fun NotesScreenRoot(
                 }
             }
 
+            is NotesEvent.NavigateToViewDetail -> {
+                navController.navigate("${NavigationRoute.ViewDetail.route}/${event.noteId}") {
+                    popUpTo(NavigationRoute.Notes.route) { inclusive = false }
+                    launchSingleTop = true
+                }
+            }
+
             NotesEvent.NavigateToSettings -> {
                 navController.navigate(NavigationRoute.Settings.route) {
                     popUpTo(NavigationRoute.Notes.route) {inclusive = false}
@@ -185,9 +192,8 @@ fun NotesScreen(
                         title = note.title,
                         description = truncatedContent,
                         modifier = Modifier
-                            .clickable { onAction(NotesAction.NavigateToEditDetail(note.id)) }
                             .combinedClickable(
-                                onClick = { onAction(NotesAction.NavigateToEditDetail(note.id)) },
+                                onClick = { onAction(NotesAction.NavigateToViewDetail(note.id)) },
                                 onLongClick = { onAction(NotesAction.ShowDeleteDialog(note)) }
                             )
                     )
