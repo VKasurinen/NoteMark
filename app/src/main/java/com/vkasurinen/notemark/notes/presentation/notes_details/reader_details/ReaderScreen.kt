@@ -93,6 +93,13 @@ fun ReaderScreenRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
+
+            ReaderEvent.NavigateBack -> {
+                navController.navigate(NavigationRoute.Notes.route) {
+                    popUpTo(NavigationRoute.ReaderDetail.route) { inclusive = true }
+                }
+            }
+
             ReaderEvent.NavigateToEditDetail -> {
                 navController.navigate("${NavigationRoute.EditDetail.route}/$noteId") {
                     popUpTo(NavigationRoute.ReaderDetail.route) { inclusive = true }
@@ -100,7 +107,7 @@ fun ReaderScreenRoot(
             }
             ReaderEvent.NavigateToViewDetail -> {
                 navController.navigate("${NavigationRoute.ViewDetail.route}/$noteId") {
-                    popUpTo(NavigationRoute.ReaderDetail.route) { inclusive = true }
+                    popUpTo(NavigationRoute.Notes.route) { inclusive = true }
                 }
             }
             is ReaderEvent.Error -> {
@@ -158,7 +165,7 @@ fun ReaderScreen(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .clickable { onAction(ReaderAction.NavigateToView) }
+                    .clickable { onAction(ReaderAction.OnBackClick) }
                     .padding(vertical = 8.dp)
                     .align(Alignment.CenterStart)
             ) {

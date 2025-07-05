@@ -56,6 +56,12 @@ class ReaderViewModel(
                 }
             }
 
+            ReaderAction.OnBackClick -> {
+                viewModelScope.launch {
+                    eventChannel.send(ReaderEvent.NavigateBack)
+                }
+            }
+
             ReaderAction.ToggleUI -> {
                 toggleUI()
             }

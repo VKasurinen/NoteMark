@@ -68,7 +68,9 @@ fun ViewDetailScreenRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             ViewDetailEvent.NavigateBack -> {
-                navController.popBackStack()
+                navController.navigate(NavigationRoute.Notes.route) {
+                    popUpTo(NavigationRoute.Notes.route) { inclusive = true }
+                }
             }
             ViewDetailEvent.NavigateToEditDetail -> {
                 navController.navigate("${NavigationRoute.EditDetail.route}/$noteId") {
