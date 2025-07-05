@@ -71,10 +71,14 @@ fun ViewDetailScreenRoot(
                 navController.popBackStack()
             }
             ViewDetailEvent.NavigateToEditDetail -> {
-                navController.navigate("${NavigationRoute.EditDetail.route}/$noteId")
+                navController.navigate("${NavigationRoute.EditDetail.route}/$noteId") {
+                    popUpTo(NavigationRoute.ViewDetail.route) { inclusive = true }
+                }
             }
             ViewDetailEvent.NavigateToReaderDetail -> {
-                navController.navigate("${NavigationRoute.ReaderDetail.route}/$noteId")
+                navController.navigate("${NavigationRoute.ReaderDetail.route}/$noteId") {
+                    popUpTo(NavigationRoute.ViewDetail.route) { inclusive = true }
+                }
             }
             is ViewDetailEvent.Error -> {
                 Toast.makeText(context, event.error.asString(context), Toast.LENGTH_SHORT).show()

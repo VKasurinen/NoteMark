@@ -65,7 +65,7 @@ import org.koin.core.parameter.parametersOf
 fun EditDetailScreenRoot(
     navController: NavHostController,
     noteId: String,
-    viewModel: EditDetailViewModel = koinViewModel() { parametersOf(noteId)}
+    viewModel: EditDetailViewModel = koinViewModel() { parametersOf(noteId) }
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -131,125 +131,135 @@ fun EditDetailScreen(
         focusRequester.requestFocus()
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding( top = if (isLandscape) 40.dp else 50.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = {
-                    val hasChanges =
-                        state.title != state.originalTitle || state.content != state.originalContent
-                    if (hasChanges) {
-                        showDiscardDialog = true
-                    } else {
-                        navController.popBackStack()
-                    }
-                },
-                modifier = Modifier.size(30.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Cross,
-                    contentDescription = "Close",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
-            NoteMarkButtonTertiary(
-                text = "SAVE NOTE",
-                onClick = { onAction(EditDetailAction.OnSaveClick) }
-            )
-        }
 
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    horizontal = if (isLandscape) 48.dp else 16.dp,
-                    vertical = 16.dp
-                )
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(top = if (isLandscape) 40.dp else 50.dp)
         ) {
-            BasicTextField(
-                value = titleValue,
-                onValueChange = { onAction(EditDetailAction.OnTitleChange(it.text)) },
-                textStyle = TextStyle(
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = SpaceGrotesk
-                ),
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                decorationBox = { titleTextField ->
-                    Box {
-                        if (state.title.isEmpty()) {
-                            Text(
-                                text = "Note Title",
-                                style = TextStyle(
-                                    fontSize = 30.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontFamily = SpaceGrotesk
-                                )
-                            )
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = {
+                        val hasChanges =
+                            state.title != state.originalTitle || state.content != state.originalContent
+                        if (hasChanges) {
+                            showDiscardDialog = true
+                        } else {
+                            navController.navigate("${NavigationRoute.ViewDetail.route}/${state.id}") {
+                                popUpTo(NavigationRoute.Notes.route) { inclusive = false }
+                                launchSingleTop = true
+                            }
                         }
-                        titleTextField()
-                    }
+                    },
+                    modifier = Modifier.size(30.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Cross,
+                        contentDescription = "Close",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                NoteMarkButtonTertiary(
+                    text = "SAVE NOTE",
+                    onClick = { onAction(EditDetailAction.OnSaveClick) }
+                )
+            }
 
-            HorizontalDivider(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .alpha(0.5f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            BasicTextField(
-                value = state.content,
-                onValueChange = { onAction(EditDetailAction.OnContentChange(it)) },
-                textStyle = TextStyle(
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                decorationBox = { contentTextField ->
-                    Box {
-                        if (state.content.isEmpty()) {
-                            Text(
-                                text = "Tap to enter note content",
-                                style = TextStyle(
-                                    fontSize = 16.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        horizontal = if (isLandscape) 48.dp else 16.dp,
+                        vertical = 16.dp
+                    )
+            ) {
+                BasicTextField(
+                    value = titleValue,
+                    onValueChange = { onAction(EditDetailAction.OnTitleChange(it.text)) },
+                    textStyle = TextStyle(
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontFamily = SpaceGrotesk
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    decorationBox = { titleTextField ->
+                        Box {
+                            if (state.title.isEmpty()) {
+                                Text(
+                                    text = "Note Title",
+                                    style = TextStyle(
+                                        fontSize = 30.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontFamily = SpaceGrotesk
+                                    )
                                 )
-                            )
+                            }
+                            titleTextField()
                         }
-                        contentTextField()
                     }
-                }
-            )
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(0.5f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                BasicTextField(
+                    value = state.content,
+                    onValueChange = { onAction(EditDetailAction.OnContentChange(it)) },
+                    textStyle = TextStyle(
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    decorationBox = { contentTextField ->
+                        Box {
+                            if (state.content.isEmpty()) {
+                                Text(
+                                    text = "Tap to enter note content",
+                                    style = TextStyle(
+                                        fontSize = 16.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                            }
+                            contentTextField()
+                        }
+                    }
+                )
+            }
         }
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(bottom = 50.dp),
             contentAlignment = Alignment.BottomCenter
         ) {
@@ -264,7 +274,6 @@ fun EditDetailScreen(
                 }
             )
         }
-
     }
 
     if (showDiscardDialog) {
@@ -303,7 +312,6 @@ fun EditDetailScreen(
     heightDp = 400,
     name = "Landscape"
 )
-@Preview
 @Composable
 fun DetailScreenPreview() {
     NoteMarkTheme {

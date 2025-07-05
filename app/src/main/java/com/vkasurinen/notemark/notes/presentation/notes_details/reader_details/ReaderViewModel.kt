@@ -27,9 +27,6 @@ class ReaderViewModel(
     private val noteId: String
 ) : ViewModel() {
 
-    private val _uiVisible = MutableStateFlow(false)
-    val uiVisible = _uiVisible.asStateFlow()
-
     private val _state = MutableStateFlow(ReaderState())
     val state = _state.asStateFlow()
 
@@ -40,8 +37,30 @@ class ReaderViewModel(
 
     init {
         loadNoteDetails()
+
+        if (state.value.uiVisible) {
+            startInitialAutoHide()
+        }
     }
 
+    fun onAction(action: ReaderAction) {
+        when (action) {
+            ReaderAction.NavigateToEdit -> {
+                viewModelScope.launch {
+                    eventChannel.send(ReaderEvent.NavigateToEditDetail)
+                }
+            }
+            ReaderAction.NavigateToView -> {
+                viewModelScope.launch {
+                    eventChannel.send(ReaderEvent.NavigateToViewDetail)
+                }
+            }
+
+            ReaderAction.ToggleUI -> {
+                toggleUI()
+            }
+        }
+    }
 
     private fun resetAutoHideTimer() {
         autoHideJob?.cancel()
@@ -58,36 +77,20 @@ class ReaderViewModel(
         resetAutoHideTimer()
     }
 
-
     fun onScrollOrInteraction() {
         autoHideJob?.cancel()
         autoHideJob = viewModelScope.launch {
-            delay(5000)
-            _uiVisible.value = false
+//            delay(2000)
+            _state.update { it.copy(uiVisible = false) }
         }
     }
 
-    fun onAction(action: ReaderAction) {
-        when (action) {
-            ReaderAction.NavigateBack -> {
-                viewModelScope.launch {
-                    eventChannel.send(ReaderEvent.NavigateBack)
-                }
-            }
-            ReaderAction.NavigateToEdit -> {
-                viewModelScope.launch {
-                    eventChannel.send(ReaderEvent.NavigateToEditDetail)
-                }
-            }
-            ReaderAction.NavigateToReader -> {
-                viewModelScope.launch {
-                    eventChannel.send(ReaderEvent.NavigateToReaderDetail)
-                }
-            }
 
-            ReaderAction.ToggleUI -> {
-                toggleUI()
-            }
+    private fun startInitialAutoHide() {
+        autoHideJob?.cancel()
+        autoHideJob = viewModelScope.launch {
+            delay(5000)
+            _state.update { it.copy(uiVisible = false) }
         }
     }
 

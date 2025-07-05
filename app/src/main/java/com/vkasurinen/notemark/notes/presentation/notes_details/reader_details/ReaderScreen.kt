@@ -75,7 +75,7 @@ fun ReaderScreenRoot(
     noteId: String,
     viewModel: ReaderViewModel = koinViewModel { parametersOf(noteId) }
 ) {
-    val state by viewModel.uiVisible.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -93,14 +93,15 @@ fun ReaderScreenRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            ReaderEvent.NavigateBack -> {
-                navController.popBackStack()
-            }
             ReaderEvent.NavigateToEditDetail -> {
-                navController.navigate("${NavigationRoute.EditDetail.route}/$noteId")
+                navController.navigate("${NavigationRoute.EditDetail.route}/$noteId") {
+                    popUpTo(NavigationRoute.ReaderDetail.route) { inclusive = true }
+                }
             }
-            ReaderEvent.NavigateToReaderDetail -> {
-                navController.navigate("${NavigationRoute.ReaderDetail.route}/$noteId")
+            ReaderEvent.NavigateToViewDetail -> {
+                navController.navigate("${NavigationRoute.ViewDetail.route}/$noteId") {
+                    popUpTo(NavigationRoute.ReaderDetail.route) { inclusive = true }
+                }
             }
             is ReaderEvent.Error -> {
                 Toast.makeText(context, event.error.asString(context), Toast.LENGTH_SHORT).show()
@@ -109,7 +110,7 @@ fun ReaderScreenRoot(
     }
 
     ReaderScreen(
-        state = viewModel.state.collectAsStateWithLifecycle().value,
+        state = state,
         onAction = viewModel::onAction,
         onScrollOrInteraction = viewModel::onScrollOrInteraction
     )
@@ -157,7 +158,7 @@ fun ReaderScreen(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .clickable { onAction(ReaderAction.NavigateBack) }
+                    .clickable { onAction(ReaderAction.NavigateToView) }
                     .padding(vertical = 8.dp)
                     .align(Alignment.CenterStart)
             ) {
@@ -198,7 +199,7 @@ fun ReaderScreen(
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .verticalScroll(rememberScrollState()),
+                        .verticalScroll(scrollState),
                 ) {
                     Text(
                         text = state.title,
@@ -306,7 +307,7 @@ fun ReaderScreen(
             onModeSelected = { mode ->
                 when (mode) {
                     Mode.EDIT -> onAction(ReaderAction.NavigateToEdit)
-                    Mode.READ -> {}
+                    Mode.READ -> onAction(ReaderAction.NavigateToView)
                     else -> {}
                 }
             }

@@ -39,7 +39,7 @@ fun ModeSwitcher(
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+            .background(MaterialTheme.colorScheme.surface)
             .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -74,7 +74,7 @@ fun ModeSwitcherButton(
             .clip(RoundedCornerShape(10.dp))
             .background(
                 if (selected)
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
                 else
                     Color.Transparent
             )
