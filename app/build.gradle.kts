@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,15 @@ plugins {
     alias(libs.plugins.room)
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
+
+val localProps = Properties().apply {
+    val localPropsFile = rootProject.file("local.properties")
+    if (localPropsFile.exists()) {
+        load(localPropsFile.inputStream())
+    }
+}
+val userEmail: String = localProps.getProperty("userEmail") ?: ""
+
 
 android {
     namespace = "com.vkasurinen.notemark"
@@ -20,7 +31,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "USER_EMAIL", "\"${project.findProperty("userEmail") ?: ""}\"")
+        buildConfigField("String", "USER_EMAIL", "\"$userEmail\"")
     }
 
     buildTypes {
