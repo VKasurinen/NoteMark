@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
 import com.vkasurinen.notemark.core.domain.util.Result
+import com.vkasurinen.notemark.core.presentation.util.ConnectivityObserver
 import com.vkasurinen.notemark.core.presentation.util.UiText
 import com.vkasurinen.notemark.notes.domain.Note
 import timber.log.Timber
@@ -20,7 +21,8 @@ import java.util.UUID
 
 class NotesViewModel(
     private val notesRepository: NotesRepository,
-    private val sessionStorage: SessionStorage
+    private val sessionStorage: SessionStorage,
+    private val connectivityObserver: ConnectivityObserver
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(NotesState())
@@ -36,11 +38,13 @@ class NotesViewModel(
 
     init {
         observeNotes()
-
         viewModelScope.launch {
-            sessionStorage.get()?.let { authInfo ->
-                _state.update { it.copy(username = authInfo.username) }
+            connectivityObserver.connectivity.collect { connected ->
+                _state.update { it.copy(isConnected = connected) }
             }
+        }
+        viewModelScope.launch {
+            sessionStorage.get()?.let { auth -> _state.update { it.copy(username = auth.username) } }
         }
     }
 
