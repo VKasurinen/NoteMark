@@ -1,12 +1,8 @@
 package com.vkasurinen.notemark.app.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.vkasurinen.notemark.auth.presentation.landing.LandingScreenRoot
 import com.vkasurinen.notemark.auth.presentation.login.LoginScreenRoot
@@ -15,7 +11,7 @@ import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.Edi
 import com.vkasurinen.notemark.notes.presentation.notes_details.reader_details.ReaderScreenRoot
 import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailScreenRoot
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesScreenRoot
-import com.vkasurinen.notemark.settings.SettingsScreenRoot
+import com.vkasurinen.notemark.settings.presentation.SettingsScreenRoot
 
 
 fun NavGraphBuilder.authGraph(navController: NavHostController) {

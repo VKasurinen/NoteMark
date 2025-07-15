@@ -1,28 +1,21 @@
-package com.vkasurinen.notemark.settings
+package com.vkasurinen.notemark.settings.presentation
 
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +27,7 @@ import com.vkasurinen.notemark.app.navigation.NavigationRoute
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.Exit
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
+import com.vkasurinen.notemark.settings.presentation.components.SyncIntervalDropdown
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -68,7 +62,6 @@ fun SettingsScreenRoot(
         onAction = viewModel::onAction
     )
 }
-
 
 @Composable
 fun SettingsScreen(
@@ -116,7 +109,129 @@ fun SettingsScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
 
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 4.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .align(Alignment.CenterStart)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccessTime,
+                            contentDescription = "Sync interval",
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.size(20.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Text(
+                            text = "Sync interval",
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Medium
+                            )
+                        )
+                    }
+
+                    SyncIntervalDropdown(
+                        selectedInterval = state.syncInterval,
+                        onIntervalSelected = { interval ->
+                            onAction(SettingsAction.SelectSyncInterval(interval))
+                        }
+                    )
+
+                }
+            }
+        }
+
+
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .align(Alignment.CenterHorizontally)
+                .alpha(0.5f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.7f)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 4.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onAction(SettingsAction.SyncNotes) }
+                    .padding(vertical = 8.dp, horizontal = 6.dp)
+                    .align(Alignment.CenterStart)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (state.isSyncing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Last sync",
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column(
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Sync Data",
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontWeight = FontWeight.Medium
+                            )
+                        )
+
+                        Text(
+                            text = "Last sync: ${state.lastSync} min ago",
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Medium
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .align(Alignment.CenterHorizontally)
+                .alpha(0.5f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.7f)
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -156,7 +271,6 @@ fun SettingsScreen(
         }
     }
 }
-
 
 @Preview(
     showBackground = true,

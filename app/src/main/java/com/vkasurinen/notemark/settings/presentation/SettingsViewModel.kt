@@ -1,10 +1,11 @@
-package com.vkasurinen.notemark.settings
+package com.vkasurinen.notemark.settings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vkasurinen.notemark.core.domain.SessionStorage
 import com.vkasurinen.notemark.core.presentation.util.UiText
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -36,6 +37,20 @@ class SettingsViewModel(
             SettingsAction.NavigateBack -> {
                 viewModelScope.launch {
                     eventChannel.send(SettingsEvent.NavigateBack)
+                }
+            }
+
+            is SettingsAction.SelectSyncInterval -> {
+                _state.update { it.copy(syncInterval = action.interval) }
+            }
+
+            SettingsAction.SyncNotes -> {
+                _state.update { it.copy(isSyncing = true) }
+                // Trigger the sync process here so call settingsrepo
+                viewModelScope.launch {
+                    // Simulate sync completion for now
+                    delay(2000)
+                    _state.update { it.copy(isSyncing = false) }
                 }
             }
         }

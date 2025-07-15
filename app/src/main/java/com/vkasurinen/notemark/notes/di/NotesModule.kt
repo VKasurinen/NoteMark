@@ -8,7 +8,7 @@ import com.vkasurinen.notemark.notes.presentation.notes_details.edit_details.Edi
 import com.vkasurinen.notemark.notes.presentation.notes_details.reader_details.ReaderViewModel
 import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailViewModel
 import com.vkasurinen.notemark.notes.presentation.notes_overview.NotesViewModel
-import com.vkasurinen.notemark.settings.SettingsViewModel
+import com.vkasurinen.notemark.settings.presentation.SettingsViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf

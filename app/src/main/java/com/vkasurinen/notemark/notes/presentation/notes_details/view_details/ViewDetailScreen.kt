@@ -39,17 +39,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.vkasurinen.notemark.app.navigation.NavigationRoute
-import com.vkasurinen.notemark.core.presentation.designsystem.theme.Inter
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.vkasurinen.notemark.core.presentation.designsystem.theme.SpaceGrotesk
 import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import com.vkasurinen.notemark.notes.presentation.notes_details.components.Mode
 import com.vkasurinen.notemark.notes.presentation.notes_details.components.ModeSwitcher
-import com.vkasurinen.notemark.settings.SettingsAction
-import io.ktor.http.parametersOf
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
