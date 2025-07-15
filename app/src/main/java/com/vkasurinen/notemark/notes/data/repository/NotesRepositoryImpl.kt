@@ -125,23 +125,6 @@ class NotesRepositoryImpl(
             Result.Error(e.message ?: "Failed to delete note locally")
         }
     }
-
-    override suspend fun logout(refreshToken: String) {
-        try {
-            notesApi.logout(refreshToken)
-        } catch (e: Exception) {
-            Timber.e(e, "Logout API call failed")
-        }
-    }
-
-    override suspend fun clearLocalDatabase() {
-        try {
-            noteDao.deleteAllNotes()
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to clear local database")
-        }
-    }
-
     override fun observeNotes(): Flow<List<Note>> {
         return noteDao.observeNotes().map { entities ->
             entities.map { entity ->

@@ -37,6 +37,7 @@ class NotesViewModel(
     val events = eventChannel.receiveAsFlow()
 
     init {
+        loadNotes()
         observeNotes()
         viewModelScope.launch {
             connectivityObserver.connectivity.collect { connected ->

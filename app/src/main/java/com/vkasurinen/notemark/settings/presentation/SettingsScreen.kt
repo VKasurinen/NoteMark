@@ -243,19 +243,30 @@ fun SettingsScreen(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .clickable { onAction(SettingsAction.Logout) }
+                    .clickable(
+                        enabled = !state.isLoggingOut,
+                        onClick = { onAction(SettingsAction.Logout) }
+                    )
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .align(Alignment.CenterStart)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Exit,
-                        contentDescription = "Log out",
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    if (state.isLoggingOut) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = MaterialTheme.colorScheme.error,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Exit,
+                            contentDescription = "Log out",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.width(12.dp))
 
