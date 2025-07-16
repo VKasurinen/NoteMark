@@ -1,17 +1,23 @@
 package com.vkasurinen.notemark.notes.data
 
 import android.content.Context
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import com.vkasurinen.notemark.core.database.dao.NotePendingSyncDao
+import com.vkasurinen.notemark.core.database.entity.NotePendingSyncEntity
+import com.vkasurinen.notemark.core.domain.util.Result
+import com.vkasurinen.notemark.notes.network.RemoteNoteDataSource
 
 
 //class CreateRunWorker(
 //    context: Context,
 //    private val params: WorkerParameters,
-//    private val remoteRunDataSource: RemoteRunDataSource,
-//    private val pendingSyncDao: RunPendingSyncDao
+//    private val remoteRunDataSource: RemoteNoteDataSource,
+//    private val pendingSyncDao: NotePendingSyncDao
 //): CoroutineWorker(context, params) {
 //
 //    override suspend fun doWork(): Result {
-//        if(runAttemptCount >= 5) {
+//        if (runAttemptCount >= 5) {
 //            return Result.failure()
 //        }
 //
@@ -21,7 +27,7 @@ import android.content.Context
 //
 //        val run = pendingRunEntity.run.toRun()
 //        return when(val result = remoteRunDataSource.postRun(run, pendingRunEntity.mapPictureBytes)) {
-//            is com.example.core.domain.util.Result.Error -> {
+//            is com.vkasurinen.notemark.core.domain.util.Result.Error -> {
 //                result.error.toWorkerResult()
 //            }
 //            is com.example.core.domain.util.Result.Success -> {
@@ -29,9 +35,10 @@ import android.content.Context
 //                Result.success()
 //            }
 //        }
+//
 //    }
 //
 //    companion object {
-//        const val RUN_ID = "RUN_ID"
+//        const val NOTE_ID = "NOTE_ID"
 //    }
 //}

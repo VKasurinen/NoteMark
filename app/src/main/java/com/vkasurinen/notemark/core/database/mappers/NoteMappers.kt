@@ -48,5 +48,12 @@ fun Note.toRequest(): NoteDto {
     )
 }
 
-
-
+fun NoteEntity.toDomain(): Note {
+    return Note(
+        id = id,
+        title = title,
+        content = content,
+        createdAt = createdAt,
+        lastEditedAt = lastEditedAt
+    )
+}
