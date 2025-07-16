@@ -1,20 +1,19 @@
-package com.vkasurinen.notemark.notes.data.repository
+package com.vkasurinen.notemark.core.data.notes
 
-import com.vkasurinen.notemark.notes.data.api.NotesApi
 import com.vkasurinen.notemark.core.database.dao.NoteDao
 import com.vkasurinen.notemark.core.database.mappers.toDomain
 import com.vkasurinen.notemark.core.database.mappers.toEntity
 import com.vkasurinen.notemark.core.database.mappers.toRequest
-import com.vkasurinen.notemark.notes.domain.Note
+import com.vkasurinen.notemark.core.domain.notes.NotesRepository
 import com.vkasurinen.notemark.core.domain.util.Result
-import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
+import com.vkasurinen.notemark.notes.domain.Note
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class NotesRepositoryImpl(
+class OfflineFirstNoteRepository(
     private val notesApi: NotesApi,
     private val noteDao: NoteDao,
     private val applicationScope: CoroutineScope

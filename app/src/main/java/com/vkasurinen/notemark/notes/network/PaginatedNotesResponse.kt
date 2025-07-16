@@ -1,9 +1,9 @@
-package com.vkasurinen.notemark.notes.data.requests
+package com.vkasurinen.notemark.notes.network
 
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class PaginatedNotesResponse(
-    val notes: List<NoteResponse>,
+    val notes: List<NoteDto>,
     val total: Int
 )

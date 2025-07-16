@@ -1,10 +1,7 @@
-package com.vkasurinen.notemark.notes.data.api
+package com.vkasurinen.notemark.core.data.notes
 
-import com.vkasurinen.notemark.core.database.mappers.toDomain
-import com.vkasurinen.notemark.notes.data.requests.NoteRequest
-import com.vkasurinen.notemark.notes.data.requests.NoteResponse
-import com.vkasurinen.notemark.notes.data.requests.PaginatedNotesResponse
-import com.vkasurinen.notemark.notes.domain.Note
+import com.vkasurinen.notemark.notes.network.PaginatedNotesResponse
+import com.vkasurinen.notemark.notes.network.NoteDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -15,13 +12,13 @@ class NotesApi(
     private val httpClient: HttpClient
 ) {
 
-    suspend fun createNote(request: NoteRequest): NoteResponse {
+    suspend fun createNote(request: NoteDto): NoteDto {
         try {
             Timber.d("createNote() - Sending POST request with body: $request")
             val response = httpClient.post("https://notemark.pl-coding.com/api/notes") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
-            }.body<NoteResponse>()
+            }.body<NoteDto>()
             Timber.d("createNote() - Received response: $response")
             return response
         } catch (e: Exception) {
@@ -31,13 +28,13 @@ class NotesApi(
     }
 
 
-    suspend fun updateNote(request: NoteRequest): NoteResponse {
+    suspend fun updateNote(request:  NoteDto): NoteDto {
         try {
             Timber.tag("NotesApi").d("updateNote() - Sending PUT request with body: $request")
             val response = httpClient.put("https://notemark.pl-coding.com/api/notes") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
-            }.body<NoteResponse>()
+            }.body<NoteDto>()
             Timber.tag("NotesApi").d("updateNote() - Received response: $response")
             return response
         } catch (e: Exception) {

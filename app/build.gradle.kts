@@ -112,4 +112,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.material.icons.extended)
+
+    implementation(libs.androidx.work.runtime.ktx)
 }

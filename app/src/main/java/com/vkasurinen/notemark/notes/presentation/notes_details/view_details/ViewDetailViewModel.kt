@@ -3,11 +3,10 @@ package com.vkasurinen.notemark.notes.presentation.notes_details.view_details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vkasurinen.notemark.core.presentation.util.UiText
-import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
+import com.vkasurinen.notemark.core.domain.notes.NotesRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update

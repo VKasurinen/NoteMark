@@ -3,10 +3,8 @@ package com.vkasurinen.notemark.notes.presentation.notes_details.edit_details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vkasurinen.notemark.core.domain.util.Result
+import com.vkasurinen.notemark.core.domain.notes.NotesRepository
 import com.vkasurinen.notemark.notes.domain.Note
-import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
-import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailAction
-import com.vkasurinen.notemark.notes.presentation.notes_details.view_details.ViewDetailEvent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

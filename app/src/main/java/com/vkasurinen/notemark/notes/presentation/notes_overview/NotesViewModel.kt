@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.vkasurinen.notemark.notes.domain.repository.NotesRepository
+import com.vkasurinen.notemark.core.domain.notes.NotesRepository
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.core.presentation.util.ConnectivityObserver
 import com.vkasurinen.notemark.core.presentation.util.UiText

@@ -1,11 +1,10 @@
 package com.vkasurinen.notemark.core.database.mappers
 
 import com.vkasurinen.notemark.core.database.entity.NoteEntity
-import com.vkasurinen.notemark.notes.data.requests.NoteRequest
-import com.vkasurinen.notemark.notes.data.requests.NoteResponse
 import com.vkasurinen.notemark.notes.domain.Note
+import com.vkasurinen.notemark.notes.network.NoteDto
 
-fun NoteResponse.toDomain(): Note {
+fun NoteDto.toDomain(): Note {
     return Note(
         id = id,
         title = title,
@@ -28,7 +27,7 @@ fun Note.toEntity(): NoteEntity {
 
 
 
-fun NoteResponse.toEntity(): NoteEntity {
+fun NoteDto.toEntity(): NoteEntity {
     return NoteEntity(
         id = id,
         title = title,
@@ -39,8 +38,8 @@ fun NoteResponse.toEntity(): NoteEntity {
 }
 
 
-fun Note.toRequest(): NoteRequest {
-    return NoteRequest(
+fun Note.toRequest(): NoteDto {
+    return NoteDto(
         id = id,
         title = title,
         content = content,

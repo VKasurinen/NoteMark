@@ -1,9 +1,9 @@
-package com.vkasurinen.notemark.notes.data.requests
+package com.vkasurinen.notemark.notes.network
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NoteRequest(
+data class NoteDto(
     val id: String,
     val title: String,
     val content: String,
