@@ -36,10 +36,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SyncIntervalDropdown(
-    selectedInterval: String,
-    onIntervalSelected: (String) -> Unit
+    selectedInterval: SyncInterval,
+    onIntervalSelected: (SyncInterval) -> Unit
 ) {
-    val intervals = listOf("Manual only", "15 minutes", "30 minutes", "1 hour")
+    val intervals = SyncInterval.values().toList()
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -51,7 +51,7 @@ fun SyncIntervalDropdown(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = selectedInterval,
+                text = selectedInterval.toString(),
                 style = MaterialTheme.typography.labelMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -78,7 +78,7 @@ fun SyncIntervalDropdown(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = interval,
+                                text = interval.toString(),
                                 modifier = Modifier.weight(1f)
                             )
                             if (interval == selectedInterval) {
@@ -99,3 +99,4 @@ fun SyncIntervalDropdown(
         }
     }
 }
+

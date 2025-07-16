@@ -39,11 +39,25 @@ class NotesViewModel(
     init {
         loadNotes()
         observeNotes()
+
+        viewModelScope.launch {
+            connectivityObserver.connectivity.collect { connected ->
+                _state.update { it.copy(isConnected = connected) }
+
+                if (connected) {
+                    viewModelScope.launch {
+                        notesRepository.syncPendingNotes()
+                    }
+                }
+            }
+        }
+
         viewModelScope.launch {
             connectivityObserver.connectivity.collect { connected ->
                 _state.update { it.copy(isConnected = connected) }
             }
         }
+
         viewModelScope.launch {
             sessionStorage.get()?.let { auth -> _state.update { it.copy(username = auth.username) } }
         }

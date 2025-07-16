@@ -7,6 +7,7 @@ import com.vkasurinen.notemark.core.domain.notes.LocalDataSource
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.domain.Note
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RoomLocalNoteDataSource(
     private val noteDao: NoteDao
@@ -48,6 +49,31 @@ class RoomLocalNoteDataSource(
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error("Failed to delete note locally: ${e.message}")
+        }
+    }
+
+    override suspend fun getNoteById(id: String): Result<Note> {
+        return try {
+            noteDao.getNoteById(id)?.toDomain()?.let { note ->
+                Result.Success(note)
+            } ?: Result.Error("Note not found")
+        } catch (e: Exception) {
+            Result.Error("Failed to get note: ${e.message}")
+        }
+    }
+
+    override suspend fun upsertNotes(notes: List<Note>): Result<Unit> {
+        return try {
+            noteDao.upsertNotes(notes.map { it.toEntity() })
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error("Failed to upsert notes: ${e.message}")
+        }
+    }
+
+    override fun observeNotes(): Flow<List<Note>> {
+        return noteDao.observeNotes().map { entities ->
+            entities.map { it.toDomain() }
         }
     }
 }

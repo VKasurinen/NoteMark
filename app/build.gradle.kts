@@ -114,4 +114,5 @@ dependencies {
     implementation(libs.material.icons.extended)
 
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.koin.workmanager)
 }

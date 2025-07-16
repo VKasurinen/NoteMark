@@ -6,6 +6,7 @@ import com.vkasurinen.notemark.app.di.appModule
 import com.vkasurinen.notemark.auth.di.authModule
 import com.vkasurinen.notemark.core.database.di.databaseModule
 import com.vkasurinen.notemark.notes.di.notesModule
+import com.vkasurinen.notemark.notes.network.di.networkModule
 import com.vkasurinen.notemark.settings.di.settingsModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,8 @@ class NoteMarkApp: Application() {
                 authModule,
                 notesModule,
                 databaseModule,
-                settingsModule
+                settingsModule,
+                networkModule,
             )
         }
     }

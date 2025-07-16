@@ -7,6 +7,6 @@ data class NotesState(
     val notes: List<Note> = emptyList(),
     val noteToDelete: Note? = null,
     val showDeleteDialog: Boolean = false,
-    val isConnected: Boolean = true
+    val isConnected: Boolean = true,
 )
 

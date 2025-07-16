@@ -11,5 +11,5 @@ interface NotesRepository {
     suspend fun getNotes(page: Int, size: Int): Result<List<Note>>
     suspend fun deleteNote(id: String): Result<Unit>
     fun observeNotes(): Flow<List<Note>>
-//    suspend fun syncPendingRuns()
+    suspend fun syncPendingNotes()
 }

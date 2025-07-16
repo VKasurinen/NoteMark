@@ -20,6 +20,9 @@ interface NoteDao {
     @Query("SELECT * FROM note ORDER BY lastEditedAt DESC")
     suspend fun getNotesOnce(): List<NoteEntity>
 
+    @Query("SELECT * FROM note WHERE id = :id")
+    suspend fun getNoteById(id: String): NoteEntity?
+
     @Query("DELETE FROM note WHERE id = :id")
     suspend fun deleteNote(id: String)
 

@@ -8,8 +8,8 @@ interface SyncRunScheduler {
     suspend fun cancelAllSyncs()
 
     sealed interface SyncType {
-        data object FetchRuns : SyncType
-        data class DeleteRun(val noteId: String) : SyncType
-        data class CreateRun(val note: Note) : SyncType
+        data object FetchNote : SyncType
+        data class DeleteNote(val noteId: String) : SyncType
+        data class CreateNote(val note: Note) : SyncType
     }
 }
