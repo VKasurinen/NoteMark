@@ -59,6 +59,11 @@ import com.vkasurinen.notemark.core.presentation.designsystem.theme.SpaceGrotesk
 import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import com.vkasurinen.notemark.notes.presentation.notes_details.components.Mode
 import com.vkasurinen.notemark.notes.presentation.notes_details.components.ModeSwitcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -119,6 +124,7 @@ fun EditDetailScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     var showDiscardDialog by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
+    var debounceJob by remember { mutableStateOf<Job?>(null) }
 
     val titleValue = remember(state.title) {
         TextFieldValue(
@@ -173,10 +179,6 @@ fun EditDetailScreen(
                     )
                 }
 
-                NoteMarkButtonTertiary(
-                    text = "SAVE NOTE",
-                    onClick = { onAction(EditDetailAction.OnSaveClick) }
-                )
             }
 
             Column(
@@ -190,8 +192,15 @@ fun EditDetailScreen(
             ) {
                 BasicTextField(
                     value = titleValue,
-                    onValueChange = { onAction(EditDetailAction.OnTitleChange(it.text)) },
-                    textStyle = TextStyle(
+                    onValueChange = {
+                        onAction(EditDetailAction.OnTitleChange(it.text))
+                        debounceJob?.cancel()
+                        debounceJob = CoroutineScope(Dispatchers.Main).launch {
+                            delay(3000)
+                            onAction(EditDetailAction.OnSaveClick)
+                        }
+                    },
+                        textStyle = TextStyle(
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -231,8 +240,16 @@ fun EditDetailScreen(
 
                 BasicTextField(
                     value = state.content,
-                    onValueChange = { onAction(EditDetailAction.OnContentChange(it)) },
-                    textStyle = TextStyle(
+                    onValueChange = {
+                        onAction(EditDetailAction.OnContentChange(it))
+                        debounceJob?.cancel()
+                        debounceJob = CoroutineScope(Dispatchers.Main).launch {
+                            delay(3000)
+                            onAction(EditDetailAction.OnSaveClick)
+                        }
+                    },
+
+                        textStyle = TextStyle(
                         fontSize = 20.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     ),

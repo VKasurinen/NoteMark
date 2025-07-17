@@ -29,6 +29,8 @@ import com.vkasurinen.notemark.core.presentation.designsystem.theme.NoteMarkThem
 import com.vkasurinen.notemark.core.presentation.util.ObserveAsEvents
 import com.vkasurinen.notemark.settings.presentation.components.SyncIntervalDropdown
 import org.koin.androidx.compose.koinViewModel
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SettingsScreenRoot(
@@ -214,7 +216,7 @@ fun SettingsScreen(
                         )
 
                         Text(
-                            text = "Last sync: ${state.lastSync} min ago",
+                            text = state.lastSync?.let { "Last sync: $it" } ?: "Not synced yet",
                             style = MaterialTheme.typography.titleSmall.copy(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontWeight = FontWeight.Medium
@@ -282,6 +284,8 @@ fun SettingsScreen(
         }
     }
 }
+
+
 
 @Preview(
     showBackground = true,

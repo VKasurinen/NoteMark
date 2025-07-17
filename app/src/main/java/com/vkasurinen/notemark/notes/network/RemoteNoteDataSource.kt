@@ -24,21 +24,31 @@ class RemoteNoteDataSource(
 
     override suspend fun postNote(note: Note): Result<Note> {
         return try {
-            val response = notesApi.createNote(note.toRequest())
+            val request = note.toRequest()
+            Timber.d("Sending POST request: $request")
+            val response = notesApi.createNote(request)
+            Timber.d("Received response: $response")
             Result.Success(response.toDomain())
         } catch (e: Exception) {
             Timber.e(e, "Failed to create note on remote")
-            Result.Error("Failed to create note on remote")
+            Result.Error("Failed to create note on remote: ${e.message}")
         }
     }
 
     override suspend fun updateNote(note: Note): Result<Note> {
         return try {
-            val response = notesApi.updateNote(note.toRequest())
-            Result.Success(response.toDomain())
+            if (!note.isSynced) {
+                Timber.d("Note is not synced, using POST to create it on the server")
+                val response = notesApi.createNote(note.toRequest())
+                Result.Success(response.toDomain())
+            } else {
+                Timber.d("Note is synced, using PUT to update it on the server")
+                val response = notesApi.updateNote(note.toRequest())
+                Result.Success(response.toDomain())
+            }
         } catch (e: Exception) {
-            Timber.e(e, "Failed to update note on remote")
-            Result.Error("Failed to update note on remote")
+            Timber.e(e, "Failed to sync note with the server")
+            Result.Error("Failed to sync note: ${e.message}")
         }
     }
 

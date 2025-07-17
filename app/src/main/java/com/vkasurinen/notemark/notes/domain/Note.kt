@@ -5,5 +5,6 @@ data class Note(
     val title: String,
     val content: String,
     val createdAt: String,
-    val lastEditedAt: String
+    val lastEditedAt: String,
+    val isSynced: Boolean = false
 )

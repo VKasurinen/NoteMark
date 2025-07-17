@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.time.Instant
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class SettingsViewModel(
     private val sessionStorage: SessionStorage,
@@ -135,7 +136,8 @@ class SettingsViewModel(
     }
 
     private fun getCurrentFormattedTime(): String {
-        return ZonedDateTime.now().toLocalTime().toString()
+        return DateTimeFormatter.ofPattern("HH:mm")
+            .format(ZonedDateTime.now().toLocalTime())
     }
 
     private fun sendEvent(event: SettingsEvent) {

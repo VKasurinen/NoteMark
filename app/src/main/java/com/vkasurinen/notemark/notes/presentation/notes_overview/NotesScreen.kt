@@ -36,6 +36,7 @@ import com.vkasurinen.notemark.notes.presentation.notes_overview.components.getU
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.outlined.Settings
@@ -44,6 +45,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -200,6 +202,7 @@ fun NotesScreen(
                         title = note.title,
                         description = truncatedContent,
                         modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
                             .combinedClickable(
                                 onClick = { onAction(NotesAction.NavigateToViewDetail(note.id)) },
                                 onLongClick = { onAction(NotesAction.ShowDeleteDialog(note)) }

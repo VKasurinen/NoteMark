@@ -7,17 +7,20 @@ import androidx.work.WorkerParameters
 import com.vkasurinen.notemark.core.database.dao.NoteDao
 import com.vkasurinen.notemark.core.database.dao.NotePendingSyncDao
 import com.vkasurinen.notemark.core.database.entity.NotePendingSyncEntity
-import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.network.RemoteNoteDataSource
 import timber.log.Timber
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+
 
 class CreateNoteWorker(
     context: Context,
-    params: WorkerParameters,
-    private val remoteNoteDataSource: RemoteNoteDataSource,
-    private val pendingSyncDao: NotePendingSyncDao,
-    private val noteDao: NoteDao
-) : CoroutineWorker(context, params) {
+    params: WorkerParameters
+) : CoroutineWorker(context, params), KoinComponent {
+
+    private val remoteNoteDataSource: RemoteNoteDataSource by inject()
+    private val pendingSyncDao: NotePendingSyncDao by inject()
+    private val noteDao: NoteDao by inject()
 
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) {
@@ -34,13 +37,18 @@ class CreateNoteWorker(
             }
             is com.vkasurinen.notemark.core.domain.util.Result.Error -> {
                 Timber.e(result.message, "Failed to create note remotely")
-                pendingSyncDao.upsertPendingSyncNote(
-                    NotePendingSyncEntity(
-                        noteId = noteId,
-                        syncType = NotePendingSyncEntity.SyncType.CREATE,
-                        lastAttempt = System.currentTimeMillis()
+                if (result.message?.contains("not found", ignoreCase = true) == true) {
+                    pendingSyncDao.deletePendingSyncNote(noteId)
+                    Timber.e("Note not found on server, removed from sync queue")
+                } else {
+                    pendingSyncDao.upsertPendingSyncNote(
+                        NotePendingSyncEntity(
+                            noteId = noteId,
+                            syncType = NotePendingSyncEntity.SyncType.CREATE,
+                            lastAttempt = System.currentTimeMillis()
+                        )
                     )
-                )
+                }
                 Result.retry()
             }
             is com.vkasurinen.notemark.core.domain.util.Result.Loading -> {

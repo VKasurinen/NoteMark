@@ -39,7 +39,7 @@ fun SyncIntervalDropdown(
     selectedInterval: SyncInterval,
     onIntervalSelected: (SyncInterval) -> Unit
 ) {
-    val intervals = SyncInterval.values().toList()
+    val intervals = SyncInterval.entries
     var expanded by remember { mutableStateOf(false) }
 
     Box {
