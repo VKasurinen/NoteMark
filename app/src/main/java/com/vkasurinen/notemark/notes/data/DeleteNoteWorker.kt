@@ -4,16 +4,19 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.vkasurinen.notemark.core.database.dao.NotePendingSyncDao
-import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.network.RemoteNoteDataSource
+import com.vkasurinen.notemark.core.domain.util.Result
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import timber.log.Timber
 
 class DeleteNoteWorker(
     context: Context,
-    params: WorkerParameters,
-    private val remoteNoteDataSource: RemoteNoteDataSource,
-    private val pendingSyncDao: NotePendingSyncDao
-) : CoroutineWorker(context, params) {
+    params: WorkerParameters
+) : CoroutineWorker(context, params), KoinComponent {
+
+    private val remoteNoteDataSource: RemoteNoteDataSource by inject()
+    private val pendingSyncDao: NotePendingSyncDao by inject()
 
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) {
@@ -21,9 +24,9 @@ class DeleteNoteWorker(
         }
 
         val noteId = inputData.getString(NOTE_ID) ?: return Result.failure()
+
         return when (val result = remoteNoteDataSource.deleteNote(noteId)) {
             is com.vkasurinen.notemark.core.domain.util.Result.Success -> {
-                // Use the correct method name from NotePendingSyncDao
                 pendingSyncDao.deleteDeletedNote(noteId)
                 Result.success()
             }

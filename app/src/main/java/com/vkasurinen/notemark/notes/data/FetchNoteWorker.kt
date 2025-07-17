@@ -7,14 +7,17 @@ import com.vkasurinen.notemark.core.database.dao.NoteDao
 import com.vkasurinen.notemark.core.database.mappers.toEntity
 import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.network.RemoteNoteDataSource
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import timber.log.Timber
 
 class FetchNoteWorker(
     context: Context,
-    params: WorkerParameters,
-    private val remoteNoteDataSource: RemoteNoteDataSource,
-    private val noteDao: NoteDao
-) : CoroutineWorker(context, params) {
+    params: WorkerParameters
+) : CoroutineWorker(context, params), KoinComponent {
+
+    private val remoteNoteDataSource: RemoteNoteDataSource by inject()
+    private val noteDao: NoteDao by inject()
 
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) {
