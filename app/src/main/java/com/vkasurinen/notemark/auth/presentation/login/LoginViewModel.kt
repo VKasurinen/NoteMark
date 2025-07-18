@@ -24,6 +24,7 @@ import com.vkasurinen.notemark.core.presentation.util.UiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 class LoginViewModel @SuppressLint("StaticFieldLeak") constructor(
     private val authRepository: AuthRepository,
@@ -83,22 +84,26 @@ class LoginViewModel @SuppressLint("StaticFieldLeak") constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoggingIn = true, isLoading = true) }
 
-            val result = authRepository.login(
-                email = _state.value.email.text.toString().trim(),
-                password = _state.value.password.text.toString()
-            )
+            val result = withTimeoutOrNull(5000L) {
+                authRepository.login(
+                    email = _state.value.email.text.toString().trim(),
+                    password = _state.value.password.text.toString()
+                )
+            }
+
             _state.update { it.copy(isLoggingIn = false, isLoading = false) }
 
             when (result) {
-                is Result.Error -> {
-                    eventChannel.send(LoginEvent.Error(UiText.Dynamic("Invalid login credentials")))
+                null -> {
+                    eventChannel.send(LoginEvent.Error(UiText.Dynamic("Login timed out. Please try again.")))
                 }
-
+                is Result.Error -> {
+                    eventChannel.send(LoginEvent.Error(UiText.Dynamic("Invalid email or password")))
+                }
                 is Result.Success -> {
                     eventChannel.send(LoginEvent.LoginSuccess)
                 }
-
-                is Result.Loading -> Unit // Handled by state update
+                is Result.Loading -> Unit // already handled above
             }
         }
     }
