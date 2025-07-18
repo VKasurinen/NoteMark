@@ -48,7 +48,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
@@ -134,10 +133,6 @@ fun EditDetailScreen(
         )
     }
 
-    LaunchedEffect(state) {
-        Timber.d("State updated - title: '${state.title}', content: '${state.content}'")
-    }
-
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -165,7 +160,13 @@ fun EditDetailScreen(
                     onClick = {
                         val hasChanges =
                             state.title != state.originalTitle || state.content != state.originalContent
-                        if (hasChanges) {
+                        if (state.content.isBlank()) {
+                            Toast.makeText(
+                                navController.context,
+                                "Content cannot be empty. Please add some text.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else if (hasChanges) {
                             showDiscardDialog = true
                         } else {
                             navController.navigate("${NavigationRoute.ViewDetail.route}/${state.id}") {
@@ -319,10 +320,20 @@ fun EditDetailScreen(
                     NoteMarkButton(
                         text = "Discard",
                         onClick = {
-                            showDiscardDialog = false
-                            navController.popBackStack()
+                            if (state.content.isBlank() || !state.hasSavedOnce) {
+                                Toast.makeText(
+                                    navController.context,
+                                    "Content hasn't been saved yet. Please wait before discarding.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                debounceJob?.cancel()
+                                showDiscardDialog = false
+                                navController.popBackStack()
+                            }
                         }
                     )
+
                 }
             }
         )

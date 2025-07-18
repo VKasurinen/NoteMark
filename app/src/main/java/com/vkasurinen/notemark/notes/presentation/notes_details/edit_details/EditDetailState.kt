@@ -8,5 +8,6 @@ data class EditDetailState(
     val originalContent: String = "",
     val createdAt: String = "",
     val lastEditedAt: String = "",
-    val showDiscardDialog: Boolean = false
+    val showDiscardDialog: Boolean = false,
+    val hasSavedOnce: Boolean = false
 )
