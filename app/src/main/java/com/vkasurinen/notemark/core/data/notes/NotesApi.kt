@@ -28,12 +28,13 @@ class NotesApi(
     }
 
 
-    suspend fun updateNote(request:  NoteDto): NoteDto {
+    suspend fun updateNote(request: NoteDto): NoteDto {
         try {
             Timber.tag("NotesApi").d("updateNote() - Sending PUT request with body: $request")
             val response = httpClient.put("https://notemark.pl-coding.com/api/notes") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
+                Timber.d("""API Update Request: ID: ${request.id}Title: '${request.title} 'Content: '${request.content}'""".trimIndent())
             }.body<NoteDto>()
             Timber.tag("NotesApi").d("updateNote() - Received response: $response")
             return response

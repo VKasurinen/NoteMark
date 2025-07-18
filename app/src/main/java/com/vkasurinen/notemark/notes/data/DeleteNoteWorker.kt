@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.vkasurinen.notemark.core.database.dao.NotePendingSyncDao
+import com.vkasurinen.notemark.core.domain.notes.LocalDataSource
 import com.vkasurinen.notemark.notes.network.RemoteNoteDataSource
 import com.vkasurinen.notemark.core.domain.util.Result
 import org.koin.core.component.KoinComponent
@@ -17,6 +18,7 @@ class DeleteNoteWorker(
 
     private val remoteNoteDataSource: RemoteNoteDataSource by inject()
     private val pendingSyncDao: NotePendingSyncDao by inject()
+    private val localDataSource: LocalDataSource by inject()
 
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) {
@@ -25,19 +27,26 @@ class DeleteNoteWorker(
 
         val noteId = inputData.getString(NOTE_ID) ?: return Result.failure()
 
-        return when (val result = remoteNoteDataSource.deleteNote(noteId)) {
-            is com.vkasurinen.notemark.core.domain.util.Result.Success -> {
-                pendingSyncDao.deleteDeletedNote(noteId)
-                Result.success()
+        return try {
+            // 1. Delete from remote first
+            when (val result = remoteNoteDataSource.deleteNote(noteId)) {
+                is com.vkasurinen.notemark.core.domain.util.Result.Success -> {
+                    // 2. Only delete locally after successful remote deletion
+                    localDataSource.deleteNote(noteId)
+                    // 3. Remove from sync queue
+                    pendingSyncDao.deletePendingSyncNote(noteId)
+                    pendingSyncDao.deleteDeletedNote(noteId)
+                    Result.success()
+                }
+                is com.vkasurinen.notemark.core.domain.util.Result.Error -> {
+                    Timber.e("Delete failed for $noteId: ${result.message}")
+                    Result.retry()
+                }
+                is com.vkasurinen.notemark.core.domain.util.Result.Loading -> Result.retry()
             }
-            is com.vkasurinen.notemark.core.domain.util.Result.Error -> {
-                Timber.e(result.message, "Failed to delete note remotely")
-                Result.retry()
-            }
-            is com.vkasurinen.notemark.core.domain.util.Result.Loading -> {
-                Timber.d("DeleteNoteWorker is loading")
-                Result.retry()
-            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error in DeleteNoteWorker")
+            Result.retry()
         }
     }
 

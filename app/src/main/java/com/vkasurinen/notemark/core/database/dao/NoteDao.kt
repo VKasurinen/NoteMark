@@ -1,6 +1,7 @@
 package com.vkasurinen.notemark.core.database.dao
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import com.vkasurinen.notemark.core.database.entity.NoteEntity
 import kotlinx.coroutines.flow.Flow
@@ -8,9 +9,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NoteDao {
 
+    @Transaction
     @Upsert
     suspend fun upsertNote(note: NoteEntity)
 
+    @Transaction
     @Upsert
     suspend fun upsertNotes(notes: List<NoteEntity>)
 

@@ -27,7 +27,7 @@ interface NotePendingSyncDao {
     suspend fun getAllDeletedNotes(): List<DeletedNoteSyncEntity>
 
     @Upsert
-    suspend fun upsertDeletedNote(entity: DeletedNoteSyncEntity)
+    suspend fun upsertDeletedNote(deletedNote: DeletedNoteSyncEntity)
 
     @Query("DELETE FROM deleted_note_sync WHERE noteId = :noteId")
     suspend fun deleteDeletedNote(noteId: String)

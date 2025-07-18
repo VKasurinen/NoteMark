@@ -45,11 +45,19 @@ class OfflineFirstNoteRepository(
     }
 
     override suspend fun updateNote(note: Note): Result<Note> {
+        Timber.d("updateNote() - Starting update for note ID: ${note.id}")
         return try {
             // 1. Update local DB first
-            localDataSource.updateNote(note)
+            Timber.d("updateNote() - Attempting to update note in local database")
+            val localUpdateResult = localDataSource.updateNote(note)
+            if (localUpdateResult is Result.Error) {
+                Timber.e("updateNote() - Local database update failed: ${localUpdateResult.message}")
+                return localUpdateResult
+            }
+            Timber.d("updateNote() - Local database update successful for note ID: ${note.id}")
 
-            // 2. Add to sync queue
+            // 2. Queue for sync
+            Timber.d("updateNote() - Queuing note for sync with ID: ${note.id}")
             notePendingSyncDao.upsertPendingSyncNote(
                 NotePendingSyncEntity(
                     noteId = note.id,
@@ -57,13 +65,14 @@ class OfflineFirstNoteRepository(
                     lastAttempt = System.currentTimeMillis()
                 )
             )
+            Timber.d("updateNote() - Note successfully queued for sync with ID: ${note.id}")
 
-            // 3. Schedule sync
-            syncScheduler.scheduleSync(SyncRunScheduler.SyncType.CreateNote(note))
-
+            // 3. Immediately return the successfully updated local note
+            Timber.d("updateNote() - Returning success for note ID: ${note.id}")
             Result.Success(note)
+
         } catch (e: Exception) {
-            Timber.e(e, "Failed to update note locally")
+            Timber.e(e, "updateNote() - Failed to update note locally for ID: ${note.id}")
             Result.Error("Failed to update note: ${e.message}")
         }
     }
@@ -77,15 +86,21 @@ class OfflineFirstNoteRepository(
             applicationScope.launch {
                 when (val remoteResult = remoteDataSource.getNotes(page, size)) {
                     is Result.Success -> {
-                        remoteResult.data?.let { notes ->
-                            localDataSource.upsertNotes(notes)
+                        remoteResult.data?.let { remoteNotes ->
+                            // Only update notes that aren't currently being edited locally
+                            val notesToUpdate = remoteNotes.filter { remoteNote ->
+                                notePendingSyncDao.getPendingSyncNote(remoteNote.id) == null
+                            }
+                            localDataSource.upsertNotes(notesToUpdate)
                         }
                     }
+
                     is Result.Error -> {
                         Timber.e("Failed to fetch notes from remote: ${remoteResult.message}")
                     }
+
                     is Result.Loading -> {
-                        // Handle loading state if needed
+                        // Possible loading state handling
                     }
                 }
             }
@@ -99,7 +114,7 @@ class OfflineFirstNoteRepository(
 
     override suspend fun deleteNote(id: String): Result<Unit> {
         return try {
-            // 1. Delete from local DB first
+            // 1. Immediately delete from local DB
             localDataSource.deleteNote(id)
 
             // 2. Check if this was a note that was created offline
@@ -132,89 +147,196 @@ class OfflineFirstNoteRepository(
         return localDataSource.observeNotes()
     }
 
-    override suspend fun syncPendingNotes() {
-        try {
-            // Sync pending creates/updates
-            val pendingNotes = notePendingSyncDao.getAllPendingSyncNotes()
-            pendingNotes.forEach { pendingNote ->
-                when (val localNoteResult = localDataSource.getNoteById(pendingNote.noteId)) {
-                    is Result.Success -> {
-                        val note = localNoteResult.data
-                        if (note != null) {
-                            when (pendingNote.syncType) {
-                                NotePendingSyncEntity.SyncType.CREATE -> {
-                                    when (val result = remoteDataSource.postNote(note)) {
-                                        is Result.Success -> {
-                                            notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
-                                        }
-                                        is Result.Error -> {
-                                            // Update last attempt time
-                                            notePendingSyncDao.upsertPendingSyncNote(
-                                                pendingNote.copy(
-                                                    lastAttempt = System.currentTimeMillis()
-                                                )
-                                            )
-                                        }
-                                        is Result.Loading -> {
-                                            // Just retry next time
-                                            Timber.d("Post note loading, will retry")
-                                        }
-                                    }
-                                }
-                                NotePendingSyncEntity.SyncType.UPDATE -> {
-                                    when (val result = remoteDataSource.updateNote(note)) {
-                                        is Result.Success -> {
-                                            notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
-                                        }
-                                        is Result.Error -> {
-                                            // Update last attempt time
-                                            notePendingSyncDao.upsertPendingSyncNote(
-                                                pendingNote.copy(
-                                                    lastAttempt = System.currentTimeMillis()
-                                                )
-                                            )
-                                        }
-                                        is Result.Loading -> {
-                                            // Just retry next time
-                                            Timber.d("Update note loading, will retry")
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            // Note not found, remove from sync queue
-                            notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
-                        }
-                    }
-                    is Result.Error -> {
-                        Timber.e("Failed to get local note for sync: ${localNoteResult.message}")
-                        // Consider removing from sync queue if note can't be found
-                        notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
-                    }
-                    is Result.Loading -> {
-                        Timber.d("Loading local note, will retry")
-                    }
-                }
-            }
 
-            // Sync pending deletes
-            val pendingDeletes = notePendingSyncDao.getAllDeletedNotes()
-            pendingDeletes.forEach { deletedNote ->
-                when (val result = remoteDataSource.deleteNote(deletedNote.noteId)) {
-                    is Result.Success -> {
-                        notePendingSyncDao.deleteDeletedNote(deletedNote.noteId)
-                    }
-                    is Result.Error -> {
-                        // Could update last attempt time if needed
-                        Timber.e("Failed to delete note remotely: ${result.message}")
-                    }
-                    is Result.Loading -> {
-                        Timber.d("Delete note loading, will retry")
+    override suspend fun syncPendingNotes() {
+        Timber.d("Starting offline-first sync process")
+        try {
+            syncPendingCreatesAndUpdates()
+            syncPendingDeletes()
+        } catch (e: Exception) {
+            Timber.e(e, "Sync process failed")
+        } finally {
+            Timber.d("Sync process completed")
+        }
+    }
+
+    private suspend fun syncPendingCreatesAndUpdates() {
+        val pendingNotes = notePendingSyncDao.getAllPendingSyncNotes()
+        pendingNotes.forEach { pendingNote ->
+            if (shouldSkipSync(pendingNote)) return@forEach
+
+            when (val freshNote = getFreshNoteForSync(pendingNote.noteId)) {
+                null -> handleMissingNote(pendingNote)
+                else -> processNoteSync(freshNote, pendingNote)
+            }
+        }
+    }
+
+    private suspend fun shouldSkipSync(pendingNote: NotePendingSyncEntity): Boolean {
+        if (pendingNote.retryCount >= pendingNote.maxRetries) {
+            Timber.w("Max retries reached for note ${pendingNote.noteId}")
+            notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
+            return true
+        }
+        return false
+    }
+
+    private suspend fun getFreshNoteForSync(noteId: String): Note? {
+        return when (val result = localDataSource.getNoteById(noteId)) {
+            is Result.Success -> {
+                result.data?.also { note ->
+                    if (note.content.isBlank()) {
+                        Timber.e("Empty content detected for note $noteId")
                     }
                 }
             }
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to sync pending notes")
+            else -> {
+                Timber.e("Failed to fetch note $noteId from local DB")
+                null
+            }
         }
+    }
+
+    private suspend fun handleMissingNote(pendingNote: NotePendingSyncEntity) {
+        Timber.w("Note ${pendingNote.noteId} not found, removing from sync queue")
+        notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
+    }
+
+    private suspend fun processNoteSync(note: Note, pendingNote: NotePendingSyncEntity) {
+        Timber.d("Processing ${pendingNote.syncType} sync for note ${note.id}")
+        Timber.d("Local content: '${note.content}'")
+
+        when (pendingNote.syncType) {
+            NotePendingSyncEntity.SyncType.CREATE -> processCreateSync(note, pendingNote)
+            NotePendingSyncEntity.SyncType.UPDATE -> processUpdateSync(note, pendingNote)
+        }
+    }
+
+    private suspend fun processCreateSync(note: Note, pendingNote: NotePendingSyncEntity) {
+        when (val result = remoteDataSource.postNote(note)) {
+            is Result.Success -> {
+                result.data?.let { remoteNote ->
+                    handleCreateSuccess(note, remoteNote, pendingNote)
+                } ?: run {
+                    Timber.e("Received null note from server for create operation")
+                    handleSyncError(pendingNote, "Server returned null note")
+                }
+            }
+            is Result.Error -> handleSyncError(pendingNote, result.message)
+            is Result.Loading -> Timber.d("Create in progress for note ${note.id}")
+        }
+    }
+
+    private suspend fun processUpdateSync(note: Note, pendingNote: NotePendingSyncEntity) {
+        // Add timestamp check to prevent overwriting newer local changes
+        val serverNote = when (val result = remoteDataSource.updateNote(note)) {
+            is Result.Success -> result.data
+            else -> null
+        }
+
+        serverNote?.let { remoteNote ->
+            // Only update local if server version is newer
+            if (remoteNote.lastEditedAt > note.lastEditedAt) {
+                localDataSource.updateNote(remoteNote)
+            }
+            notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
+        } ?: handleSyncError(pendingNote, "Update failed")
+    }
+
+    private suspend fun handleCreateSuccess(
+        localNote: Note,
+        remoteNote: Note,
+        pendingNote: NotePendingSyncEntity
+    ) {
+        if (isContentMatching(localNote, remoteNote)) {
+            Timber.d("Create verified for ${localNote.id}")
+            notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
+            localDataSource.updateNote(localNote.copy(isSynced = true))
+        } else {
+            handleContentMismatch(localNote, remoteNote, pendingNote)
+        }
+    }
+
+    private fun isContentMatching(localNote: Note, remoteNote: Note): Boolean {
+        return remoteNote.content == localNote.content &&
+                remoteNote.title == localNote.title
+    }
+
+    private suspend fun handleContentMismatch(
+        localNote: Note,
+        remoteNote: Note,
+        pendingNote: NotePendingSyncEntity
+    ) {
+        Timber.w("Content mismatch detected for note ${localNote.id}")
+
+        // Implement last-write-wins strategy
+        val winningNote = if (localNote.lastEditedAt > remoteNote.lastEditedAt) {
+            Timber.d("Local version is newer, keeping it")
+            localNote
+        } else {
+            Timber.d("Remote version is newer, updating local")
+            remoteNote
+        }
+
+        // Update local with winning version
+        localDataSource.updateNote(winningNote)
+
+        // Retry sync if local version was newer
+        if (winningNote == localNote) {
+            notePendingSyncDao.upsertPendingSyncNote(
+                pendingNote.copy(
+                    lastAttempt = System.currentTimeMillis(),
+                    retryCount = pendingNote.retryCount + 1
+                )
+            )
+        } else {
+            notePendingSyncDao.deletePendingSyncNote(pendingNote.noteId)
+        }
+    }
+
+    private suspend fun handleSyncError(pendingNote: NotePendingSyncEntity, error: String?) {
+        Timber.e("Sync failed for ${pendingNote.noteId}: $error")
+        notePendingSyncDao.upsertPendingSyncNote(
+            pendingNote.copy(
+                lastAttempt = System.currentTimeMillis(),
+                retryCount = pendingNote.retryCount + 1
+            )
+        )
+    }
+
+    private suspend fun syncPendingDeletes() {
+        val pendingDeletes = notePendingSyncDao.getAllDeletedNotes()
+        pendingDeletes.forEach { deletedNote ->
+            Timber.d("Processing delete for ${deletedNote.noteId}")
+            when (val result = remoteDataSource.deleteNote(deletedNote.noteId)) {
+                is Result.Success -> {
+                    Timber.d("Delete successful for ${deletedNote.noteId}")
+                    // Remove from both queues
+                    notePendingSyncDao.deleteDeletedNote(deletedNote.noteId)
+                    notePendingSyncDao.deletePendingSyncNote(deletedNote.noteId)
+                }
+                is Result.Error -> {
+                    Timber.e("Delete failed for ${deletedNote.noteId}: ${result.message}")
+
+                    // Increment retry count and update
+                    val updatedNote = deletedNote.copy(
+                        retryCount = deletedNote.retryCount + 1
+                    )
+
+                    // Remove if max retries reached, otherwise update
+                    if (updatedNote.retryCount >= deletedNote.maxRetries) {
+                        Timber.w("Max retries reached for ${deletedNote.noteId}, removing from queue")
+                        notePendingSyncDao.deleteDeletedNote(deletedNote.noteId)
+                    } else {
+                        notePendingSyncDao.upsertDeletedNote(updatedNote)
+                    }
+                }
+                is Result.Loading -> Timber.d("Delete in progress for ${deletedNote.noteId}")
+            }
+        }
+    }
+
+    override suspend fun getNoteById(id: String): Result<Note> {
+        return localDataSource.getNoteById(id)
     }
 }

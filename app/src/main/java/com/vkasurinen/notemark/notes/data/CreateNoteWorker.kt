@@ -7,6 +7,8 @@ import androidx.work.WorkerParameters
 import com.vkasurinen.notemark.core.database.dao.NoteDao
 import com.vkasurinen.notemark.core.database.dao.NotePendingSyncDao
 import com.vkasurinen.notemark.core.database.entity.NotePendingSyncEntity
+import com.vkasurinen.notemark.core.domain.notes.LocalDataSource
+import com.vkasurinen.notemark.core.domain.util.Result
 import com.vkasurinen.notemark.notes.network.RemoteNoteDataSource
 import timber.log.Timber
 import org.koin.core.component.KoinComponent
@@ -21,6 +23,7 @@ class CreateNoteWorker(
     private val remoteNoteDataSource: RemoteNoteDataSource by inject()
     private val pendingSyncDao: NotePendingSyncDao by inject()
     private val noteDao: NoteDao by inject()
+    private val localDataSource: LocalDataSource by inject()
 
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) {
@@ -28,9 +31,14 @@ class CreateNoteWorker(
         }
 
         val noteId = inputData.getString(NOTE_ID) ?: return Result.failure()
-        val noteEntity = noteDao.getNoteById(noteId) ?: return Result.failure()
 
-        return when (val result = remoteNoteDataSource.postNote(noteEntity.toDomain())) {
+        val note = when (val result = localDataSource.getNoteById(noteId)) {
+            is com.vkasurinen.notemark.core.domain.util.Result.Success -> result.data ?: return Result.failure()
+            is com.vkasurinen.notemark.core.domain.util.Result.Error -> return Result.retry()
+            is com.vkasurinen.notemark.core.domain.util.Result.Loading -> return Result.retry()
+        }
+
+        return when (val result = remoteNoteDataSource.postNote(note)) {
             is com.vkasurinen.notemark.core.domain.util.Result.Success -> {
                 pendingSyncDao.deletePendingSyncNote(noteId)
                 Result.success()
@@ -55,6 +63,7 @@ class CreateNoteWorker(
                 Timber.d("Note creation in progress, retrying...")
                 Result.retry()
             }
+
         }
     }
 

@@ -36,19 +36,32 @@ class RemoteNoteDataSource(
     }
 
     override suspend fun updateNote(note: Note): Result<Note> {
+
+        // Debug logging
+        Timber.d("""
+        Preparing update for ${note.id}
+        Title: '${note.title}'
+        Content: '${note.content}'
+    """.trimIndent())
+
+        // Execute update
         return try {
-            if (!note.isSynced) {
-                Timber.d("Note is not synced, using POST to create it on the server")
-                val response = notesApi.createNote(note.toRequest())
-                Result.Success(response.toDomain())
-            } else {
-                Timber.d("Note is synced, using PUT to update it on the server")
-                val response = notesApi.updateNote(note.toRequest())
-                Result.Success(response.toDomain())
+            val request = note.toRequest().also {
+                Timber.d("Request payload verified - Content: '${it.content}'")
             }
+
+            val response = notesApi.updateNote(request)
+
+            // Verify response
+            if (response.content != note.content) {
+                Timber.e("Server returned mismatched content")
+                return Result.Error("Server returned inconsistent data")
+            }
+
+            Result.Success(response.toDomain())
         } catch (e: Exception) {
-            Timber.e(e, "Failed to sync note with the server")
-            Result.Error("Failed to sync note: ${e.message}")
+            Timber.e(e, "Update failed for ${note.id}")
+            Result.Error("Update failed: ${e.message}")
         }
     }
 

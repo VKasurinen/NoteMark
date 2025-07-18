@@ -65,6 +65,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 
 @Composable
 fun EditDetailScreenRoot(
@@ -131,6 +132,10 @@ fun EditDetailScreen(
             text = state.title,
             selection = TextRange(state.title.length)
         )
+    }
+
+    LaunchedEffect(state) {
+        Timber.d("State updated - title: '${state.title}', content: '${state.content}'")
     }
 
     LaunchedEffect(Unit) {
@@ -240,11 +245,13 @@ fun EditDetailScreen(
 
                 BasicTextField(
                     value = state.content,
-                    onValueChange = {
-                        onAction(EditDetailAction.OnContentChange(it))
+                    onValueChange = { newContent ->
+                        Timber.d("Content text field changed: '$newContent'")
+                        onAction(EditDetailAction.OnContentChange(newContent))
                         debounceJob?.cancel()
                         debounceJob = CoroutineScope(Dispatchers.Main).launch {
                             delay(3000)
+                            Timber.d("Auto-save triggered after debounce")
                             onAction(EditDetailAction.OnSaveClick)
                         }
                     },

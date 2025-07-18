@@ -11,7 +11,9 @@ data class NotePendingSyncEntity(
     @PrimaryKey
     val noteId: String,
     val syncType: SyncType,
-    val lastAttempt: Long = 0
+    val lastAttempt: Long,
+    val retryCount: Int = 0,
+    val maxRetries: Int = 5
 ) {
     enum class SyncType {
         CREATE, UPDATE

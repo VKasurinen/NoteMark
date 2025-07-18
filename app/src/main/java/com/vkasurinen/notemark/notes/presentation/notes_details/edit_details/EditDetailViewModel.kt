@@ -32,17 +32,24 @@ class EditDetailViewModel(
 
     init {
         if (noteId.isNotBlank()) {
+            Timber.d("EditViewModel - Initializing ViewModel for noteId: $noteId")
             loadNoteDetails(noteId)
+        } else {
+            Timber.w("EditViewModel - Initialized with blank noteId")
         }
     }
 
+    // Kotlin
     fun onAction(action: EditDetailAction) {
+        Timber.d("EditViewModel - Processing action: ${action.javaClass.simpleName}")
         when (action) {
             EditDetailAction.OnSaveClick -> {
                 viewModelScope.launch {
                     val currentState = _state.value
+                    Timber.d("EditViewModel - Save triggered - Current state: title='${currentState.title}', content='${currentState.content}'")
 
                     if (currentState.title.isBlank() || currentState.content.isBlank()) {
+                        Timber.w("EditViewModel - Validation failed - empty title or content")
                         eventChannel.send(EditDetailEvent.ShowValidationError("Content cannot be empty"))
                         return@launch
                     }
@@ -55,20 +62,50 @@ class EditDetailViewModel(
                         lastEditedAt = getCurrentTimestamp()
                     )
 
-                    val result = notesRepository.updateNote(updatedNote)
-                    if (result is Result.Success) {
-                        eventChannel.send(EditDetailEvent.NavigateToViewDetail)
+                    println("Printed note: $updatedNote")
+
+                    if (noteId.isBlank()) {
+                        // Create new note
+                        when (val result = notesRepository.createNote(updatedNote)) {
+                            is Result.Success -> {
+                                Timber.d("EditViewModel - Note creation successful")
+                                _state.update { it.copy(id = result.data!!.id) }
+                            }
+                            is Result.Error -> {
+                                Timber.e("EditViewModel - Note creation failed: ${result.message}")
+                                eventChannel.send(EditDetailEvent.ShowValidationError("Failed to create note"))
+                            }
+
+                            is Result.Loading -> TODO()
+                        }
                     } else {
-                        eventChannel.send(EditDetailEvent.ShowValidationError("Failed to update note"))
+                        // Update existing note
+                        when (val result = notesRepository.updateNote(updatedNote)) {
+                            is Result.Success -> {
+                                Timber.d("EditViewModel - Note update successful")
+                                eventChannel.send(EditDetailEvent.NavigateToViewDetail)
+                            }
+                            is Result.Error -> {
+                                Timber.e("EditViewModel - Note update failed: ${result.message}")
+                                eventChannel.send(EditDetailEvent.ShowValidationError("Failed to update note"))
+                            }
+
+                            is Result.Loading -> TODO()
+                        }
                     }
                 }
             }
 
             is EditDetailAction.OnTitleChange -> {
+                Timber.d("EditViewModel - Title changed to: '${action.title}'")
                 _state.update { it.copy(title = action.title) }
             }
+
             is EditDetailAction.OnContentChange -> {
-                _state.update { it.copy(content = action.content) }
+                if (action.content != _state.value.content) {
+                    Timber.d("EditViewModel - Content changed from '${_state.value.content}' to '${action.content}'")
+                    _state.update { it.copy(content = action.content) }
+                }
             }
 
             EditDetailAction.NavigateToReader -> {
@@ -82,33 +119,37 @@ class EditDetailViewModel(
     private fun loadNoteDetails(noteId: String) {
         viewModelScope.launch {
             try {
-                Timber.d("Loading details for note ID: $noteId")
-                val result = notesRepository.getNotes(1, 20)
-                if (result is Result.Success) {
-                    val note = result.data?.firstOrNull { it.id == noteId }
-                    if (note != null) {
-                        _state.update {
-                            it.copy(
-                                id = note.id,
-                                title = note.title,
-                                content = note.content,
-                                originalTitle = note.title,
-                                originalContent = note.content,
-                                createdAt = note.createdAt,
-                                lastEditedAt = note.lastEditedAt
-                            )
+                Timber.d("EditViewModel - Loading details for note ID: $noteId")
+                when (val result = notesRepository.getNoteById(noteId)) {
+                    is Result.Success -> {
+                        result.data?.let { note ->
+                            Timber.d("EditViewModel - Found note: $note")
+                            _state.update {
+                                it.copy(
+                                    id = note.id,
+                                    title = note.title,
+                                    content = note.content,
+                                    originalTitle = note.title,
+                                    originalContent = note.content,
+                                    createdAt = note.createdAt,
+                                    lastEditedAt = note.lastEditedAt
+                                )
+                            }
+                        } ?: run {
+                            Timber.e("EditViewModel - Note with ID $noteId not found")
                         }
-                    } else {
-                        Timber.e("Note with ID $noteId not found")
                     }
-                } else {
-                    Timber.e("Failed to fetch notes: ${result.message}")
+                    is Result.Error -> {
+                        Timber.e("EditViewModel - Failed to fetch note: ${result.message}")
+                    }
+                    is Result.Loading -> { /* handle loading */ }
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error loading note details")
+                Timber.e(e, "EditViewModel - Error loading note details")
             }
         }
     }
+
 
     private fun getCurrentTimestamp(): String {
         return java.time.Instant.now().toString()

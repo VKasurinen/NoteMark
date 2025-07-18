@@ -8,5 +8,7 @@ import androidx.room.PrimaryKey
 data class DeletedNoteSyncEntity(
     @PrimaryKey
     val noteId: String,
-    val deletedAt: Long = System.currentTimeMillis()
+    val deletedAt: Long = System.currentTimeMillis(),
+    val retryCount: Int = 0,
+    val maxRetries: Int = 5
 )
