@@ -292,8 +292,8 @@ fun ReaderScreen(
                     Text(
                         text = state.content,
                         style = TextStyle(
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     )
                 }

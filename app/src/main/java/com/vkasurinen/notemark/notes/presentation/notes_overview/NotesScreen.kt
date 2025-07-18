@@ -159,7 +159,7 @@ fun NotesScreen(
         containerColor = if (state.notes.isEmpty()) {
             MaterialTheme.colorScheme.surfaceVariant
         } else {
-            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f)
         }
     ) { innerPadding ->
         if (state.notes.isEmpty()) {
