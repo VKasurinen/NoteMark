@@ -1,7 +1,9 @@
 package com.vkasurinen.notemark.core.data.auth
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -19,22 +21,36 @@ class EncryptedSessionStorage(
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "auth_info")
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override suspend fun get(): AuthInfo? {
         val preferences = context.dataStore.data.first()
         val stored = preferences[KEY_AUTH_INFO]
+
         return stored?.let {
-            val json = if (it.startsWith(ENCRYPTED_PREFIX)) {
-                Timber.tag("EncryptedSessionStorage").e("IN IF")
-                val base64 = it.removePrefix(ENCRYPTED_PREFIX)
-                EncryptionUtil.decrypt(base64)
-            } else {
-                Timber.tag("EncryptedSessionStorage").e("Fallbacking to else")
-                set(Json.decodeFromString<AuthInfoSerializable>(it).toAuthInfo())
-                it
+            try {
+                val json = if (it.startsWith(ENCRYPTED_PREFIX)) {
+                    Timber.tag("EncryptedSessionStorage").e("IN IF")
+                    val base64 = it.removePrefix(ENCRYPTED_PREFIX)
+                    EncryptionUtil.decrypt(base64)
+                } else {
+                    Timber.tag("EncryptedSessionStorage").e("Fallbacking to else")
+                    set(Json.decodeFromString<AuthInfoSerializable>(it).toAuthInfo())
+                    it
+                }
+                Json.decodeFromString<AuthInfoSerializable>(json).toAuthInfo()
+
+            } catch (e: javax.crypto.AEADBadTagException) {
+                Timber.tag("EncryptedSessionStorage").e(e, "Decryption failed — clearing session")
+                clear()
+                null
+            } catch (e: android.security.KeyStoreException) {
+                Timber.tag("EncryptedSessionStorage").e(e, "Keystore error — clearing session")
+                clear()
+                null
             }
-            Json.decodeFromString<AuthInfoSerializable>(json).toAuthInfo()
         }
     }
+
 
     override suspend fun set(info: AuthInfo?) {
         context.dataStore.edit { preferences ->

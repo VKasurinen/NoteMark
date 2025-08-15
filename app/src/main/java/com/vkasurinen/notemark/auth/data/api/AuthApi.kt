@@ -18,7 +18,7 @@ class AuthApi(
 
     suspend fun register(request: RegisterRequest): HttpResponse {
         return try {
-            val response = httpClient.post("https://notemark.pl-coding.com/api/auth/register") {
+            val response = httpClient.post("https://notemark-backend-650928036735.europe-north2.run.app/api/auth/register") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -33,7 +33,7 @@ class AuthApi(
     suspend fun login(request: LoginRequest): LoginResponse {
         return try {
             Timber.tag("AuthApi").d("Sending login request: $request")
-            val response: LoginResponse = httpClient.post("https://notemark.pl-coding.com/api/auth/login") {
+            val response: LoginResponse = httpClient.post("https://notemark-backend-650928036735.europe-north2.run.app/api/auth/login") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()

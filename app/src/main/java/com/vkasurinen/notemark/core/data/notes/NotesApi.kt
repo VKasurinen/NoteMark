@@ -15,7 +15,7 @@ class NotesApi(
     suspend fun createNote(request: NoteDto): NoteDto {
         try {
             Timber.d("createNote() - Sending POST request with body: $request")
-            val response = httpClient.post("https://notemark.pl-coding.com/api/notes") {
+            val response = httpClient.post("https://notemark-backend-650928036735.europe-north2.run.app/api/notes") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.body<NoteDto>()
@@ -31,7 +31,7 @@ class NotesApi(
     suspend fun updateNote(request: NoteDto): NoteDto {
         try {
             Timber.tag("NotesApi").d("updateNote() - Sending PUT request with body: $request")
-            val response = httpClient.put("https://notemark.pl-coding.com/api/notes") {
+            val response = httpClient.put("https://notemark-backend-650928036735.europe-north2.run.app/api/notes") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
                 Timber.d("""API Update Request: ID: ${request.id}Title: '${request.title} 'Content: '${request.content}'""".trimIndent())
@@ -47,7 +47,7 @@ class NotesApi(
     suspend fun getNotes(page: Int, size: Int): PaginatedNotesResponse {
         return try {
             Timber.d("getNotes(paginated) - page: $page, size: $size")
-            val response = httpClient.get("https://notemark.pl-coding.com/api/notes") {
+            val response = httpClient.get("https://notemark-backend-650928036735.europe-north2.run.app/api/notes") {
                 parameter("page", page)
                 parameter("size", size)
             }.body<PaginatedNotesResponse>().also {
@@ -70,7 +70,7 @@ class NotesApi(
     private suspend fun getNotesUnpaginated(): PaginatedNotesResponse {
         return try {
             Timber.d("getNotesUnpaginated() - trying without pagination")
-            httpClient.get("https://notemark.pl-coding.com/api/notes")
+            httpClient.get("https://notemark-backend-650928036735.europe-north2.run.app/api/notes")
                 .body<PaginatedNotesResponse>().also {
                     Timber.d("Unpaginated response: $it")
                 }
@@ -84,7 +84,7 @@ class NotesApi(
     suspend fun deleteNote(id: String) {
         try {
             Timber.tag("NotesApi").d("deleteNote() - Sending DELETE request for note ID: $id")
-            httpClient.delete("https://notemark.pl-coding.com/api/notes/$id")
+            httpClient.delete("https://notemark-backend-650928036735.europe-north2.run.app/api/notes/$id")
             Timber.tag("NotesApi").d("deleteNote() - Successfully deleted note ID: $id")
         } catch (e: Exception) {
             Timber.tag("NotesApi").e(e, "deleteNote() - Error during DELETE request")
