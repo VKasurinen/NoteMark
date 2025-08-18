@@ -61,7 +61,7 @@ class HttpClientFactory(
                     refreshTokens {
                         val currentAuthInfo = sessionStorage.get()
                         try {
-                            val response: RefreshTokenResponse = client.post("https://notemark.pl-coding.com/api/auth/refresh") {
+                            val response: RefreshTokenResponse = client.post("https://notemark-backend-650928036735.europe-north2.run.app/api/auth/refresh") {
                                 contentType(ContentType.Application.Json)
                                 setBody(
                                     RefreshTokenRequest(
