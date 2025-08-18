@@ -31,6 +31,7 @@ class NotesApi(
     suspend fun updateNote(request: NoteDto): NoteDto {
         try {
             Timber.tag("NotesApi").d("updateNote() - Sending PUT request with body: $request")
+            Timber.d("Title: ${request.title}, Content: ${request.content}")
             val response = httpClient.put("https://notemark-backend-650928036735.europe-north2.run.app/api/notes") {
                 contentType(ContentType.Application.Json)
                 setBody(request)

@@ -99,7 +99,7 @@ class ReaderViewModel(
     private fun loadNoteDetails() {
         viewModelScope.launch {
             try {
-                val result = notesRepository.getNotes(page = 1, size = 20)
+                val result = notesRepository.getNotes(page = 0, size = 20)
                 if (result is Result.Success) {
                     val note = result.data?.find { it.id == noteId }
                     if (note != null) {

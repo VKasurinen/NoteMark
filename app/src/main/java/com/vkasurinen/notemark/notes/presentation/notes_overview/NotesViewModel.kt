@@ -123,7 +123,7 @@ class NotesViewModel(
     private fun loadNotes() {
         viewModelScope.launch {
             try {
-                val result = notesRepository.getNotes(page = 1, size = 20)
+                val result = notesRepository.getNotes(page = 0, size = 20)
                 if (result is Result.Success) {
                     _state.update { it.copy(notes = result.data ?: emptyList()) }
                 } else {
