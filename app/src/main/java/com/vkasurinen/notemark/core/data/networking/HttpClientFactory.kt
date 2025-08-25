@@ -30,16 +30,12 @@ import timber.log.Timber
 class HttpClientFactory(
     private val sessionStorage: SessionStorage
 ) {
-
     fun build(engine: HttpClientEngine = OkHttp.create()): HttpClient {
         return HttpClient(engine) {
             install(ContentNegotiation) {
-                json(
-                    json = Json {
-                        ignoreUnknownKeys = true
-                    }
-                )
+                json(Json { ignoreUnknownKeys = true })
             }
+
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
@@ -48,10 +44,12 @@ class HttpClientFactory(
                 }
                 level = LogLevel.ALL
             }
+
             install(Auth) {
                 bearer {
                     loadTokens {
                         val authInfo = sessionStorage.get()
+                        Timber.d("Loading tokens for request - access: ${authInfo?.accessToken?.take(10)}...")
                         BearerTokens(
                             accessToken = authInfo?.accessToken ?: "",
                             refreshToken = authInfo?.refreshToken ?: ""
@@ -63,11 +61,9 @@ class HttpClientFactory(
                         try {
                             val response: RefreshTokenResponse = client.post("https://notemark-backend-650928036735.europe-north2.run.app/api/auth/refresh") {
                                 contentType(ContentType.Application.Json)
-                                setBody(
-                                    RefreshTokenRequest(
-                                        refreshToken = currentAuthInfo?.refreshToken ?: ""
-                                    )
-                                )
+                                setBody(RefreshTokenRequest(
+                                    refreshToken = currentAuthInfo?.refreshToken ?: ""
+                                ))
                             }.body()
 
                             val newAuthInfo = AuthInfo(
@@ -83,14 +79,13 @@ class HttpClientFactory(
                             )
                         } catch (e: Exception) {
                             Timber.e(e, "Failed to refresh token")
-                            BearerTokens(
-                                accessToken = "",
-                                refreshToken = ""
-                            )
+                            sessionStorage.set(null)
+                            null
                         }
                     }
                 }
             }
+
             defaultRequest {
                 header("X-User-Email", BuildConfig.USER_EMAIL)
             }
