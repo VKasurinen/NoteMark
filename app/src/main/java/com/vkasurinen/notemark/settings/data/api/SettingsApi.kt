@@ -12,7 +12,7 @@ class SettingsApi(
 ) {
     suspend fun logout(refreshToken: String) {
         try {
-            httpClient.post("https://notemark.pl-coding.com/api/auth/logout") {
+            httpClient.post("https://notemark-backend-650928036735.europe-north2.run.app/api/auth/logout") {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("refreshToken" to refreshToken))
             }
